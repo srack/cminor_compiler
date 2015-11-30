@@ -1,5 +1,5 @@
 /* Sam Rack
- * Compilers - Parser
+ * Compilers
  * decl.c
  */
 
@@ -55,8 +55,15 @@ void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int sh
 	if (sym = scope_lookup_local(*h, d->name)) {
 		if (!sym->funcDefined && d->code) {
 			// okay, the funciton was declared already, but this is the definition
-			sym->funcDefined = 1;	
-			d->symbol = sym;
+			// but need to typecheck the declaration vs the definition
+			if (!type_compare(sym->type, d->type)) {
+				fprintf(stderr, "resolve error: function prototype of %s does not match its definition\n", d->name);
+				++error_count;
+			}
+			else {
+				sym->funcDefined = 1;	
+				d->symbol = sym;
+			}
 		}
 		else {
 			fprintf(stderr, "resolve error: %s is defined again in the same scope\n", d->name);
@@ -101,7 +108,7 @@ void decl_typecheck( struct decl *d ) {
 	// if it is a declaration with an assignment, check the expression vs the type
 	// 	of the declaration
 	if (d->value) {
-		if (d->symbol->kind == SYMBOL_GLOBAL && (d->value->left || d->value->right)) {
+		if (d->symbol->kind == SYMBOL_GLOBAL && /*(d->value->left || d->value->right)*/ !expr_isconst(d->value)) {
 			printf("type error: cannot have a non-literal (");
 			expr_print(d->value);
 			printf(") at the global declaration of %s\n", d->name);

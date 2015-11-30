@@ -1,9 +1,7 @@
 /* Sam Rack
  * Compilers
  * expr.h
- * Interface for functions that handle expressions in c minor code.
  */
-
 #ifndef EXPR_H
 #define EXPR_H
 
@@ -76,5 +74,6 @@ void expr_print( struct expr * e );
 void expr_resolve( struct expr *e, struct hash_table *h, int shouldPrint );
 void expr_delete( struct expr *e );
 struct type *expr_typecheck( struct expr * e );
+int expr_isconst( struct expr *e );
 void expr_codegen( struct expr *e, FILE *f );
 #endif

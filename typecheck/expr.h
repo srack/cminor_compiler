@@ -1,5 +1,5 @@
 /* Sam Rack
- * Compilers - Parser
+ * Compilers
  * expr.h
  */
 #ifndef EXPR_H
@@ -73,5 +73,5 @@ void expr_print( struct expr * e );
 void expr_resolve( struct expr *e, struct hash_table *h, int shouldPrint );
 void expr_delete( struct expr *e );
 struct type *expr_typecheck( struct expr * e );
-
+int expr_isconst( struct expr *e );
 #endif

@@ -770,3 +770,20 @@ struct type *expr_typecheck( struct expr * e ) {
 	}
 }
 
+int expr_isconst( struct expr *e ) {
+	// if both children are null, then it is a literal constant
+	if (!e->left && !e->right) return 1;
+	
+	// if one the of the children is not null, and it is not an array
+	//  initializer, then it is not a constant
+	if (e->kind != EXPR_ARRAY_INIT) return 0;
+
+	struct expr *elist = e->left;
+	while (elist) {
+		if (!expr_isconst(elist)) return 0;
+		elist = elist->next;
+	}
+	return 1;
+
+
+}
