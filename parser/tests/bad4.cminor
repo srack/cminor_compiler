@@ -1,0 +1,14 @@
+/* this has nested brackets that do not match */
+
+fucn: function integer(s: string, a: char) = {
+
+	{
+		a: integer = 5;
+		for ( ; a < 40; ) 
+			if (a > 5)
+				print 5;
+		}
+	}
+
+
+}

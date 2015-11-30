@@ -1,0 +1,27 @@
+x: integer = 10*2;
+
+func1: function void (i: integer) = {
+	if (i == 10) 
+		return;
+	else {
+		print i, x;
+		return;
+	}
+
+}
+
+main: function integer (x: integer) = {
+	i: integer;
+	j: integer;
+	for (i = 0; i < 50; i++) {
+		j++;
+		x++;
+		print "hello\nworld ", x, func1(j);	// check typecheck for print statement
+		if (x<5) {
+			func1(x);
+			return 15+j;
+		}
+	}
+	return 10+j;
+}
+

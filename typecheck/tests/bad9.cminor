@@ -1,0 +1,10 @@
+// try to add two booleans
+
+i: function void () = {
+
+	x: integer = 1;
+	y: integer = 2;
+
+	z: integer = (x<y) + (10-y==x);
+
+}

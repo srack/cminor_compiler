@@ -1,0 +1,4 @@
+//what if we use the escape character before \n in a string literal??
+
+_932812myString: string = " helwodafsiwk ckdi7263 \n \
+		fdksfi sai23813";

@@ -1,0 +1,13 @@
+// print statemetn with many different kinds of expressions
+
+f: function integer () = {
+
+	x: integer = 5;
+	b: boolean = x == 6;
+	print b, x, " hello!", 'c', '\0';
+
+
+	return x;
+
+
+}

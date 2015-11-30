@@ -1,0 +1,16 @@
+/* this program has initialization of a 2d array
+ */
+
+arr: array [2] array [3] integer = {{1, 2, 3}, {4, 5, 6}};
+
+main: function integer () = {
+	i: integer;
+	for (i = 0; i < 2 == true; i++) {
+		j: integer;
+		for (j = 0; j <3 == true; j++) {
+			print arr[i][j], "\n";
+		}
+
+	}
+	return 0;
+}

@@ -1,0 +1,23 @@
+/* this program is going to have a lot of braces to show off the indenting! */
+
+myProgram: function array [] integer (x: integer, str: string) =  {
+	if (x < 0 == true) {
+		y: array [3] integer;
+		return y;
+	}
+	else {
+		{
+			x: char = 'c';
+			{
+				print x, " ", str;
+			}
+		}	
+		for ( ; x < 10; x++) {
+			print str, '\n';
+		}
+	}
+	
+	z: array [3] integer;
+	return z;
+
+}

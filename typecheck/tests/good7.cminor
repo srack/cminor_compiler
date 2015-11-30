@@ -1,0 +1,10 @@
+x: integer = 5;
+
+f: function array [] array [3] integer () = {
+	x: array [5] array [3] integer;
+	x[1][1] = 5;
+	return x;
+
+}
+
+

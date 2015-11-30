@@ -1,0 +1,7 @@
+function: helloWorld (x: integer) {
+	// this will print helloWorld x times! */ still in the comment
+	i: integer = 0;
+	for (i = 0; i < x; i++) {
+		print "hello, \tworld!!!\n"
+	}
+}

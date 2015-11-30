@@ -1,0 +1,10 @@
+x: integer;
+
+main: function integer () = {
+	i: integer;
+	for (i = 0; i < 50; i++) {
+		x++;
+		// does the \n print out correctly?
+		print "hello\nworld ", x;
+	}
+}

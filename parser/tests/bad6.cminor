@@ -1,0 +1,11 @@
+// trying to subscript a non-name
+
+main: function boolean (y: integer) = {
+	x: array [10] array [10] boolean;
+
+	if (y != 5) {
+		return (x+5)[4][4];
+	}
+	else
+		return false;
+}

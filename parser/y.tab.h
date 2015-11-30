@@ -1,0 +1,55 @@
+#define ARRAY 257
+#define BOOLEAN 258
+#define CHAR 259
+#define ELSE 260
+#define FALSE 261
+#define FOR 262
+#define FUNCTION 263
+#define IF 264
+#define INTEGER 265
+#define PRINT 266
+#define RETURN 267
+#define STRING 268
+#define TRUE 269
+#define VOID 270
+#define WHILE 271
+#define LPAREN 272
+#define RPAREN 273
+#define LBRACKET 274
+#define RBRACKET 275
+#define LBRACE 276
+#define RBRACE 277
+#define COMMA 278
+#define SEMICOLON 279
+#define COLON 280
+#define INCREMENT 281
+#define DECREMENT 282
+#define PLUS 283
+#define MINUS 284
+#define EXPONENT 285
+#define MULT 286
+#define DIVIDE 287
+#define MOD 288
+#define NOT 289
+#define LT 290
+#define LE 291
+#define GT 292
+#define GE 293
+#define EQ 294
+#define NEQ 295
+#define AND 296
+#define OR 297
+#define ASSIGN 298
+#define IDENTIFIER 299
+#define INTEGER_LITERAL 300
+#define CHARACTER_LITERAL 301
+#define STRING_LITERAL 302
+#define TOKEN_ERROR 303
+typedef union {
+	struct decl *decl;
+	struct stmt *stmt;
+	struct expr *expr;
+	struct param_list *params;
+	struct type *type;
+} YYSTYPE;
+extern YYSTYPE yylval;

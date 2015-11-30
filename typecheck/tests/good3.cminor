@@ -1,0 +1,16 @@
+// this does a function declaration within a function
+// then defines it later in the file
+
+main: function integer () = {
+	func: function void (x: integer);
+	func(1);
+	return 2;
+}
+
+func: function void (x: integer) = {
+	b: array [2] integer = {6^2, 7*(x+1)};
+	
+	print b[1];
+
+
+}

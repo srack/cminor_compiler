@@ -1,0 +1,5 @@
+function: main() {
+	print "hello", "world";
+	/* here's a  comment followed by multiply then divide  */*/
+	integer: x = 78;
+}

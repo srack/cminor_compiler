@@ -1,0 +1,7 @@
+/* this program has an invalid identifier in it, which should be a scan error */
+
+main: function integer() = {
+	1fdsakiewa: string = "asfdiwa";
+
+	return 5;
+}

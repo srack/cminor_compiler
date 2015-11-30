@@ -1,0 +1,8 @@
+/* this has empty parentheses in an expression */
+
+f: function integer () = {
+
+	x: integer = 7;
+
+	return x*();
+}

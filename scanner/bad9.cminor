@@ -1,0 +1,4 @@
+// here I am trying to escape the \n character
+str: string = "hello \
+		world";
+

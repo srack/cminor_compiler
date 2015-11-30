@@ -1,0 +1,2 @@
+i: integer = 7292;
+y: float = 7382.829;	// this should fail!

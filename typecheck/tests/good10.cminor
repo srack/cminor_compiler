@@ -1,0 +1,10 @@
+// try to assign one array to another with correct sizes/types
+
+f: function integer () = {
+
+	x: array [5] integer;
+	y: array [5] integer = {4, 3, 2, 1, 5};
+	x = y;
+	return x[1];
+
+}

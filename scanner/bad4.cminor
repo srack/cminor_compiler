@@ -1,0 +1,9 @@
+/**** //how about comment in a comment?? **
+
+*/
+
+//now a nested comment with // first
+
+// this comment has started, but I want to do a multiline one /*
+
+	so I should be able to do this?? */

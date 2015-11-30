@@ -1,0 +1,8 @@
+// only subscript a 2d array once to add a fund type to it
+
+main: function void () = {
+
+	a: array [4] array [2] string;
+	a[1] = "hey";
+
+}

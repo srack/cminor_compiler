@@ -1,0 +1,8 @@
+/* empty array intializer */
+
+f: function void () = {
+
+	x: array [4] integer = {};
+
+
+}

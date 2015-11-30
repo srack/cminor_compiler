@@ -1,0 +1,3 @@
+hello: string = "8fdskac \t dkasf			\n	";
+// try a character??
+wordl1342: char = '/s'

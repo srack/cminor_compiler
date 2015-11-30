@@ -1,0 +1,3 @@
+/* this file will have no whitespace except where necessary in the non-comment part */
+//main definition
+main:function integer(argc:integer,argv:array[]string)={a:integer=1;}

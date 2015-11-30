@@ -1,0 +1,6 @@
+function: main(x: integer, ar: array[]) {
+	i: integer = -45;
+	for (i = 0; i < 50; i++) {
+		x++;
+	}
+}

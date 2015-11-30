@@ -1,0 +1,2490 @@
+   0  $accept : program $end
+
+   1  program : decl_list
+
+   2  decl_list : decl decl_list
+   3            |
+
+   4  decl : name COLON type SEMICOLON
+   5       | name COLON type ASSIGN expr SEMICOLON
+   6       | name COLON type ASSIGN LBRACE stmt_list RBRACE
+
+   7  name : IDENTIFIER
+
+   8  type : INTEGER
+   9       | BOOLEAN
+  10       | CHAR
+  11       | STRING
+  12       | ARRAY LBRACKET opt_expr RBRACKET type
+  13       | FUNCTION type LPAREN param_list RPAREN
+  14       | VOID
+
+  15  param_list : nonempty_param_list
+  16             |
+
+  17  nonempty_param_list : param COMMA nonempty_param_list
+  18                      | param
+
+  19  param : name COLON type
+
+  20  stmt_list : stmt stmt_list
+  21            |
+
+  22  stmt : open_stmt
+  23       | matched_stmt
+
+  24  matched_stmt : IF LPAREN expr RPAREN matched_stmt ELSE matched_stmt
+  25               | name COLON type SEMICOLON
+  26               | name COLON type ASSIGN expr SEMICOLON
+  27               | expr SEMICOLON
+  28               | RETURN opt_expr SEMICOLON
+  29               | PRINT expr_list SEMICOLON
+  30               | FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN matched_stmt
+  31               | LBRACE stmt_list RBRACE
+
+  32  open_stmt : IF LPAREN expr RPAREN stmt
+  33            | IF LPAREN expr RPAREN matched_stmt ELSE open_stmt
+  34            | FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN open_stmt
+
+  35  opt_expr_list : expr_list
+  36                |
+
+  37  expr_list : expr COMMA expr_list
+  38            | expr
+
+  39  opt_expr : expr
+  40           |
+
+  41  expr : assign_expr
+
+  42  primary_expr : name
+  43               | INTEGER_LITERAL
+  44               | STRING_LITERAL
+  45               | CHARACTER_LITERAL
+  46               | TRUE
+  47               | FALSE
+  48               | LPAREN expr RPAREN
+  49               | LBRACE expr_list RBRACE
+  50               | name LPAREN opt_expr_list RPAREN
+  51               | subscript_expr
+
+  52  subscript_expr : subscript_expr LBRACKET expr RBRACKET
+  53                 | name LBRACKET expr RBRACKET
+
+  54  incr_expr : primary_expr INCREMENT
+  55            | primary_expr DECREMENT
+  56            | primary_expr
+
+  57  negation_expr : MINUS incr_expr
+  58                | NOT incr_expr
+  59                | incr_expr
+
+  60  exponent_expr : exponent_expr EXPONENT negation_expr
+  61                | negation_expr
+
+  62  mult_expr : mult_expr MULT exponent_expr
+  63            | mult_expr DIVIDE exponent_expr
+  64            | mult_expr MOD exponent_expr
+  65            | exponent_expr
+
+  66  add_expr : add_expr PLUS mult_expr
+  67           | add_expr MINUS mult_expr
+  68           | mult_expr
+
+  69  comp_expr : comp_expr LT add_expr
+  70            | comp_expr LE add_expr
+  71            | comp_expr GT add_expr
+  72            | comp_expr GE add_expr
+  73            | comp_expr EQ add_expr
+  74            | comp_expr NEQ add_expr
+  75            | add_expr
+
+  76  and_expr : and_expr AND comp_expr
+  77           | comp_expr
+
+  78  or_expr : or_expr OR and_expr
+  79          | and_expr
+
+  80  assign_expr : assign_expr ASSIGN or_expr
+  81              | or_expr
+
+state 0
+	$accept : . program $end  (0)
+	decl_list : .  (3)
+
+	IDENTIFIER  shift 1
+	$end  reduce 3
+
+	program  goto 2
+	decl_list  goto 3
+	decl  goto 4
+	name  goto 5
+
+
+state 1
+	name : IDENTIFIER .  (7)
+
+	.  reduce 7
+
+
+state 2
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 3
+	program : decl_list .  (1)
+
+	.  reduce 1
+
+
+state 4
+	decl_list : decl . decl_list  (2)
+	decl_list : .  (3)
+
+	IDENTIFIER  shift 1
+	$end  reduce 3
+
+	decl_list  goto 6
+	decl  goto 4
+	name  goto 5
+
+
+state 5
+	decl : name . COLON type SEMICOLON  (4)
+	decl : name . COLON type ASSIGN expr SEMICOLON  (5)
+	decl : name . COLON type ASSIGN LBRACE stmt_list RBRACE  (6)
+
+	COLON  shift 7
+	.  error
+
+
+state 6
+	decl_list : decl decl_list .  (2)
+
+	.  reduce 2
+
+
+state 7
+	decl : name COLON . type SEMICOLON  (4)
+	decl : name COLON . type ASSIGN expr SEMICOLON  (5)
+	decl : name COLON . type ASSIGN LBRACE stmt_list RBRACE  (6)
+
+	ARRAY  shift 8
+	BOOLEAN  shift 9
+	CHAR  shift 10
+	FUNCTION  shift 11
+	INTEGER  shift 12
+	STRING  shift 13
+	VOID  shift 14
+	.  error
+
+	type  goto 15
+
+
+state 8
+	type : ARRAY . LBRACKET opt_expr RBRACKET type  (12)
+
+	LBRACKET  shift 16
+	.  error
+
+
+state 9
+	type : BOOLEAN .  (9)
+
+	.  reduce 9
+
+
+state 10
+	type : CHAR .  (10)
+
+	.  reduce 10
+
+
+state 11
+	type : FUNCTION . type LPAREN param_list RPAREN  (13)
+
+	ARRAY  shift 8
+	BOOLEAN  shift 9
+	CHAR  shift 10
+	FUNCTION  shift 11
+	INTEGER  shift 12
+	STRING  shift 13
+	VOID  shift 14
+	.  error
+
+	type  goto 17
+
+
+state 12
+	type : INTEGER .  (8)
+
+	.  reduce 8
+
+
+state 13
+	type : STRING .  (11)
+
+	.  reduce 11
+
+
+state 14
+	type : VOID .  (14)
+
+	.  reduce 14
+
+
+state 15
+	decl : name COLON type . SEMICOLON  (4)
+	decl : name COLON type . ASSIGN expr SEMICOLON  (5)
+	decl : name COLON type . ASSIGN LBRACE stmt_list RBRACE  (6)
+
+	SEMICOLON  shift 18
+	ASSIGN  shift 19
+	.  error
+
+
+state 16
+	type : ARRAY LBRACKET . opt_expr RBRACKET type  (12)
+	opt_expr : .  (40)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RBRACKET  reduce 40
+
+	name  goto 29
+	opt_expr  goto 30
+	expr  goto 31
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 17
+	type : FUNCTION type . LPAREN param_list RPAREN  (13)
+
+	LPAREN  shift 43
+	.  error
+
+
+state 18
+	decl : name COLON type SEMICOLON .  (4)
+
+	.  reduce 4
+
+
+state 19
+	decl : name COLON type ASSIGN . expr SEMICOLON  (5)
+	decl : name COLON type ASSIGN . LBRACE stmt_list RBRACE  (6)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 44
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 45
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 20
+	primary_expr : FALSE .  (47)
+
+	.  reduce 47
+
+
+state 21
+	primary_expr : TRUE .  (46)
+
+	.  reduce 46
+
+
+state 22
+	primary_expr : LPAREN . expr RPAREN  (48)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 46
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 23
+	primary_expr : LBRACE . expr_list RBRACE  (49)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr_list  goto 47
+	expr  goto 48
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 24
+	negation_expr : MINUS . incr_expr  (57)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 49
+
+
+state 25
+	negation_expr : NOT . incr_expr  (58)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 50
+
+
+state 26
+	primary_expr : INTEGER_LITERAL .  (43)
+
+	.  reduce 43
+
+
+state 27
+	primary_expr : CHARACTER_LITERAL .  (45)
+
+	.  reduce 45
+
+
+state 28
+	primary_expr : STRING_LITERAL .  (44)
+
+	.  reduce 44
+
+
+state 29
+	primary_expr : name .  (42)
+	primary_expr : name . LPAREN opt_expr_list RPAREN  (50)
+	subscript_expr : name . LBRACKET expr RBRACKET  (53)
+
+	LPAREN  shift 51
+	LBRACKET  shift 52
+	RPAREN  reduce 42
+	RBRACKET  reduce 42
+	RBRACE  reduce 42
+	COMMA  reduce 42
+	SEMICOLON  reduce 42
+	INCREMENT  reduce 42
+	DECREMENT  reduce 42
+	PLUS  reduce 42
+	MINUS  reduce 42
+	EXPONENT  reduce 42
+	MULT  reduce 42
+	DIVIDE  reduce 42
+	MOD  reduce 42
+	LT  reduce 42
+	LE  reduce 42
+	GT  reduce 42
+	GE  reduce 42
+	EQ  reduce 42
+	NEQ  reduce 42
+	AND  reduce 42
+	OR  reduce 42
+	ASSIGN  reduce 42
+
+
+state 30
+	type : ARRAY LBRACKET opt_expr . RBRACKET type  (12)
+
+	RBRACKET  shift 53
+	.  error
+
+
+state 31
+	opt_expr : expr .  (39)
+
+	.  reduce 39
+
+
+state 32
+	incr_expr : primary_expr . INCREMENT  (54)
+	incr_expr : primary_expr . DECREMENT  (55)
+	incr_expr : primary_expr .  (56)
+
+	INCREMENT  shift 54
+	DECREMENT  shift 55
+	RPAREN  reduce 56
+	RBRACKET  reduce 56
+	RBRACE  reduce 56
+	COMMA  reduce 56
+	SEMICOLON  reduce 56
+	PLUS  reduce 56
+	MINUS  reduce 56
+	EXPONENT  reduce 56
+	MULT  reduce 56
+	DIVIDE  reduce 56
+	MOD  reduce 56
+	LT  reduce 56
+	LE  reduce 56
+	GT  reduce 56
+	GE  reduce 56
+	EQ  reduce 56
+	NEQ  reduce 56
+	AND  reduce 56
+	OR  reduce 56
+	ASSIGN  reduce 56
+
+
+state 33
+	primary_expr : subscript_expr .  (51)
+	subscript_expr : subscript_expr . LBRACKET expr RBRACKET  (52)
+
+	LBRACKET  shift 56
+	RPAREN  reduce 51
+	RBRACKET  reduce 51
+	RBRACE  reduce 51
+	COMMA  reduce 51
+	SEMICOLON  reduce 51
+	INCREMENT  reduce 51
+	DECREMENT  reduce 51
+	PLUS  reduce 51
+	MINUS  reduce 51
+	EXPONENT  reduce 51
+	MULT  reduce 51
+	DIVIDE  reduce 51
+	MOD  reduce 51
+	LT  reduce 51
+	LE  reduce 51
+	GT  reduce 51
+	GE  reduce 51
+	EQ  reduce 51
+	NEQ  reduce 51
+	AND  reduce 51
+	OR  reduce 51
+	ASSIGN  reduce 51
+
+
+state 34
+	negation_expr : incr_expr .  (59)
+
+	.  reduce 59
+
+
+state 35
+	exponent_expr : negation_expr .  (61)
+
+	.  reduce 61
+
+
+state 36
+	exponent_expr : exponent_expr . EXPONENT negation_expr  (60)
+	mult_expr : exponent_expr .  (65)
+
+	EXPONENT  shift 57
+	RPAREN  reduce 65
+	RBRACKET  reduce 65
+	RBRACE  reduce 65
+	COMMA  reduce 65
+	SEMICOLON  reduce 65
+	PLUS  reduce 65
+	MINUS  reduce 65
+	MULT  reduce 65
+	DIVIDE  reduce 65
+	MOD  reduce 65
+	LT  reduce 65
+	LE  reduce 65
+	GT  reduce 65
+	GE  reduce 65
+	EQ  reduce 65
+	NEQ  reduce 65
+	AND  reduce 65
+	OR  reduce 65
+	ASSIGN  reduce 65
+
+
+state 37
+	mult_expr : mult_expr . MULT exponent_expr  (62)
+	mult_expr : mult_expr . DIVIDE exponent_expr  (63)
+	mult_expr : mult_expr . MOD exponent_expr  (64)
+	add_expr : mult_expr .  (68)
+
+	MULT  shift 58
+	DIVIDE  shift 59
+	MOD  shift 60
+	RPAREN  reduce 68
+	RBRACKET  reduce 68
+	RBRACE  reduce 68
+	COMMA  reduce 68
+	SEMICOLON  reduce 68
+	PLUS  reduce 68
+	MINUS  reduce 68
+	LT  reduce 68
+	LE  reduce 68
+	GT  reduce 68
+	GE  reduce 68
+	EQ  reduce 68
+	NEQ  reduce 68
+	AND  reduce 68
+	OR  reduce 68
+	ASSIGN  reduce 68
+
+
+state 38
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : add_expr .  (75)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 75
+	RBRACKET  reduce 75
+	RBRACE  reduce 75
+	COMMA  reduce 75
+	SEMICOLON  reduce 75
+	LT  reduce 75
+	LE  reduce 75
+	GT  reduce 75
+	GE  reduce 75
+	EQ  reduce 75
+	NEQ  reduce 75
+	AND  reduce 75
+	OR  reduce 75
+	ASSIGN  reduce 75
+
+
+state 39
+	comp_expr : comp_expr . LT add_expr  (69)
+	comp_expr : comp_expr . LE add_expr  (70)
+	comp_expr : comp_expr . GT add_expr  (71)
+	comp_expr : comp_expr . GE add_expr  (72)
+	comp_expr : comp_expr . EQ add_expr  (73)
+	comp_expr : comp_expr . NEQ add_expr  (74)
+	and_expr : comp_expr .  (77)
+
+	LT  shift 63
+	LE  shift 64
+	GT  shift 65
+	GE  shift 66
+	EQ  shift 67
+	NEQ  shift 68
+	RPAREN  reduce 77
+	RBRACKET  reduce 77
+	RBRACE  reduce 77
+	COMMA  reduce 77
+	SEMICOLON  reduce 77
+	AND  reduce 77
+	OR  reduce 77
+	ASSIGN  reduce 77
+
+
+state 40
+	and_expr : and_expr . AND comp_expr  (76)
+	or_expr : and_expr .  (79)
+
+	AND  shift 69
+	RPAREN  reduce 79
+	RBRACKET  reduce 79
+	RBRACE  reduce 79
+	COMMA  reduce 79
+	SEMICOLON  reduce 79
+	OR  reduce 79
+	ASSIGN  reduce 79
+
+
+state 41
+	or_expr : or_expr . OR and_expr  (78)
+	assign_expr : or_expr .  (81)
+
+	OR  shift 70
+	RPAREN  reduce 81
+	RBRACKET  reduce 81
+	RBRACE  reduce 81
+	COMMA  reduce 81
+	SEMICOLON  reduce 81
+	ASSIGN  reduce 81
+
+
+state 42
+	expr : assign_expr .  (41)
+	assign_expr : assign_expr . ASSIGN or_expr  (80)
+
+	ASSIGN  shift 71
+	RPAREN  reduce 41
+	RBRACKET  reduce 41
+	RBRACE  reduce 41
+	COMMA  reduce 41
+	SEMICOLON  reduce 41
+
+
+state 43
+	type : FUNCTION type LPAREN . param_list RPAREN  (13)
+	param_list : .  (16)
+
+	IDENTIFIER  shift 1
+	RPAREN  reduce 16
+
+	name  goto 72
+	param_list  goto 73
+	nonempty_param_list  goto 74
+	param  goto 75
+
+
+state 44
+	decl : name COLON type ASSIGN LBRACE . stmt_list RBRACE  (6)
+	primary_expr : LBRACE . expr_list RBRACE  (49)
+	stmt_list : .  (21)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RBRACE  reduce 21
+
+	stmt_list  goto 81
+	stmt  goto 82
+	matched_stmt  goto 83
+	open_stmt  goto 84
+	name  goto 85
+	expr_list  goto 47
+	expr  goto 86
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 45
+	decl : name COLON type ASSIGN expr . SEMICOLON  (5)
+
+	SEMICOLON  shift 87
+	.  error
+
+
+state 46
+	primary_expr : LPAREN expr . RPAREN  (48)
+
+	RPAREN  shift 88
+	.  error
+
+
+state 47
+	primary_expr : LBRACE expr_list . RBRACE  (49)
+
+	RBRACE  shift 89
+	.  error
+
+
+state 48
+	expr_list : expr . COMMA expr_list  (37)
+	expr_list : expr .  (38)
+
+	COMMA  shift 90
+	RPAREN  reduce 38
+	RBRACE  reduce 38
+	SEMICOLON  reduce 38
+
+
+state 49
+	negation_expr : MINUS incr_expr .  (57)
+
+	.  reduce 57
+
+
+state 50
+	negation_expr : NOT incr_expr .  (58)
+
+	.  reduce 58
+
+
+state 51
+	primary_expr : name LPAREN . opt_expr_list RPAREN  (50)
+	opt_expr_list : .  (36)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RPAREN  reduce 36
+
+	name  goto 29
+	opt_expr_list  goto 91
+	expr_list  goto 92
+	expr  goto 48
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 52
+	subscript_expr : name LBRACKET . expr RBRACKET  (53)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 93
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 53
+	type : ARRAY LBRACKET opt_expr RBRACKET . type  (12)
+
+	ARRAY  shift 8
+	BOOLEAN  shift 9
+	CHAR  shift 10
+	FUNCTION  shift 11
+	INTEGER  shift 12
+	STRING  shift 13
+	VOID  shift 14
+	.  error
+
+	type  goto 94
+
+
+state 54
+	incr_expr : primary_expr INCREMENT .  (54)
+
+	.  reduce 54
+
+
+state 55
+	incr_expr : primary_expr DECREMENT .  (55)
+
+	.  reduce 55
+
+
+state 56
+	subscript_expr : subscript_expr LBRACKET . expr RBRACKET  (52)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 95
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 57
+	exponent_expr : exponent_expr EXPONENT . negation_expr  (60)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 96
+
+
+state 58
+	mult_expr : mult_expr MULT . exponent_expr  (62)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 97
+
+
+state 59
+	mult_expr : mult_expr DIVIDE . exponent_expr  (63)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 98
+
+
+state 60
+	mult_expr : mult_expr MOD . exponent_expr  (64)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 99
+
+
+state 61
+	add_expr : add_expr PLUS . mult_expr  (66)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 100
+
+
+state 62
+	add_expr : add_expr MINUS . mult_expr  (67)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 101
+
+
+state 63
+	comp_expr : comp_expr LT . add_expr  (69)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 102
+
+
+state 64
+	comp_expr : comp_expr LE . add_expr  (70)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 103
+
+
+state 65
+	comp_expr : comp_expr GT . add_expr  (71)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 104
+
+
+state 66
+	comp_expr : comp_expr GE . add_expr  (72)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 105
+
+
+state 67
+	comp_expr : comp_expr EQ . add_expr  (73)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 106
+
+
+state 68
+	comp_expr : comp_expr NEQ . add_expr  (74)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 107
+
+
+state 69
+	and_expr : and_expr AND . comp_expr  (76)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 108
+
+
+state 70
+	or_expr : or_expr OR . and_expr  (78)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 109
+
+
+state 71
+	assign_expr : assign_expr ASSIGN . or_expr  (80)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 110
+
+
+state 72
+	param : name . COLON type  (19)
+
+	COLON  shift 111
+	.  error
+
+
+state 73
+	type : FUNCTION type LPAREN param_list . RPAREN  (13)
+
+	RPAREN  shift 112
+	.  error
+
+
+state 74
+	param_list : nonempty_param_list .  (15)
+
+	.  reduce 15
+
+
+state 75
+	nonempty_param_list : param . COMMA nonempty_param_list  (17)
+	nonempty_param_list : param .  (18)
+
+	COMMA  shift 113
+	RPAREN  reduce 18
+
+
+state 76
+	matched_stmt : FOR . LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR . LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN open_stmt  (34)
+
+	LPAREN  shift 114
+	.  error
+
+
+state 77
+	matched_stmt : IF . LPAREN expr RPAREN matched_stmt ELSE matched_stmt  (24)
+	open_stmt : IF . LPAREN expr RPAREN stmt  (32)
+	open_stmt : IF . LPAREN expr RPAREN matched_stmt ELSE open_stmt  (33)
+
+	LPAREN  shift 115
+	.  error
+
+
+state 78
+	matched_stmt : PRINT . expr_list SEMICOLON  (29)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr_list  goto 116
+	expr  goto 48
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 79
+	matched_stmt : RETURN . opt_expr SEMICOLON  (28)
+	opt_expr : .  (40)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	SEMICOLON  reduce 40
+
+	name  goto 29
+	opt_expr  goto 117
+	expr  goto 31
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 80
+	matched_stmt : LBRACE . stmt_list RBRACE  (31)
+	primary_expr : LBRACE . expr_list RBRACE  (49)
+	stmt_list : .  (21)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RBRACE  reduce 21
+
+	stmt_list  goto 118
+	stmt  goto 82
+	matched_stmt  goto 83
+	open_stmt  goto 84
+	name  goto 85
+	expr_list  goto 47
+	expr  goto 86
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 81
+	decl : name COLON type ASSIGN LBRACE stmt_list . RBRACE  (6)
+
+	RBRACE  shift 119
+	.  error
+
+
+state 82
+	stmt_list : stmt . stmt_list  (20)
+	stmt_list : .  (21)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RBRACE  reduce 21
+
+	stmt_list  goto 120
+	stmt  goto 82
+	matched_stmt  goto 83
+	open_stmt  goto 84
+	name  goto 85
+	expr  goto 121
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 83
+	stmt : matched_stmt .  (23)
+
+	.  reduce 23
+
+
+state 84
+	stmt : open_stmt .  (22)
+
+	.  reduce 22
+
+
+state 85
+	matched_stmt : name . COLON type SEMICOLON  (25)
+	matched_stmt : name . COLON type ASSIGN expr SEMICOLON  (26)
+	primary_expr : name .  (42)
+	primary_expr : name . LPAREN opt_expr_list RPAREN  (50)
+	subscript_expr : name . LBRACKET expr RBRACKET  (53)
+
+	LPAREN  shift 51
+	LBRACKET  shift 52
+	COLON  shift 122
+	RBRACE  reduce 42
+	COMMA  reduce 42
+	SEMICOLON  reduce 42
+	INCREMENT  reduce 42
+	DECREMENT  reduce 42
+	PLUS  reduce 42
+	MINUS  reduce 42
+	EXPONENT  reduce 42
+	MULT  reduce 42
+	DIVIDE  reduce 42
+	MOD  reduce 42
+	LT  reduce 42
+	LE  reduce 42
+	GT  reduce 42
+	GE  reduce 42
+	EQ  reduce 42
+	NEQ  reduce 42
+	AND  reduce 42
+	OR  reduce 42
+	ASSIGN  reduce 42
+
+
+state 86
+	matched_stmt : expr . SEMICOLON  (27)
+	expr_list : expr . COMMA expr_list  (37)
+	expr_list : expr .  (38)
+
+	COMMA  shift 90
+	SEMICOLON  shift 123
+	RBRACE  reduce 38
+
+
+state 87
+	decl : name COLON type ASSIGN expr SEMICOLON .  (5)
+
+	.  reduce 5
+
+
+state 88
+	primary_expr : LPAREN expr RPAREN .  (48)
+
+	.  reduce 48
+
+
+state 89
+	primary_expr : LBRACE expr_list RBRACE .  (49)
+
+	.  reduce 49
+
+
+state 90
+	expr_list : expr COMMA . expr_list  (37)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr_list  goto 124
+	expr  goto 48
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 91
+	primary_expr : name LPAREN opt_expr_list . RPAREN  (50)
+
+	RPAREN  shift 125
+	.  error
+
+
+state 92
+	opt_expr_list : expr_list .  (35)
+
+	.  reduce 35
+
+
+state 93
+	subscript_expr : name LBRACKET expr . RBRACKET  (53)
+
+	RBRACKET  shift 126
+	.  error
+
+
+state 94
+	type : ARRAY LBRACKET opt_expr RBRACKET type .  (12)
+
+	.  reduce 12
+
+
+state 95
+	subscript_expr : subscript_expr LBRACKET expr . RBRACKET  (52)
+
+	RBRACKET  shift 127
+	.  error
+
+
+state 96
+	exponent_expr : exponent_expr EXPONENT negation_expr .  (60)
+
+	.  reduce 60
+
+
+state 97
+	exponent_expr : exponent_expr . EXPONENT negation_expr  (60)
+	mult_expr : mult_expr MULT exponent_expr .  (62)
+
+	EXPONENT  shift 57
+	RPAREN  reduce 62
+	RBRACKET  reduce 62
+	RBRACE  reduce 62
+	COMMA  reduce 62
+	SEMICOLON  reduce 62
+	PLUS  reduce 62
+	MINUS  reduce 62
+	MULT  reduce 62
+	DIVIDE  reduce 62
+	MOD  reduce 62
+	LT  reduce 62
+	LE  reduce 62
+	GT  reduce 62
+	GE  reduce 62
+	EQ  reduce 62
+	NEQ  reduce 62
+	AND  reduce 62
+	OR  reduce 62
+	ASSIGN  reduce 62
+
+
+state 98
+	exponent_expr : exponent_expr . EXPONENT negation_expr  (60)
+	mult_expr : mult_expr DIVIDE exponent_expr .  (63)
+
+	EXPONENT  shift 57
+	RPAREN  reduce 63
+	RBRACKET  reduce 63
+	RBRACE  reduce 63
+	COMMA  reduce 63
+	SEMICOLON  reduce 63
+	PLUS  reduce 63
+	MINUS  reduce 63
+	MULT  reduce 63
+	DIVIDE  reduce 63
+	MOD  reduce 63
+	LT  reduce 63
+	LE  reduce 63
+	GT  reduce 63
+	GE  reduce 63
+	EQ  reduce 63
+	NEQ  reduce 63
+	AND  reduce 63
+	OR  reduce 63
+	ASSIGN  reduce 63
+
+
+state 99
+	exponent_expr : exponent_expr . EXPONENT negation_expr  (60)
+	mult_expr : mult_expr MOD exponent_expr .  (64)
+
+	EXPONENT  shift 57
+	RPAREN  reduce 64
+	RBRACKET  reduce 64
+	RBRACE  reduce 64
+	COMMA  reduce 64
+	SEMICOLON  reduce 64
+	PLUS  reduce 64
+	MINUS  reduce 64
+	MULT  reduce 64
+	DIVIDE  reduce 64
+	MOD  reduce 64
+	LT  reduce 64
+	LE  reduce 64
+	GT  reduce 64
+	GE  reduce 64
+	EQ  reduce 64
+	NEQ  reduce 64
+	AND  reduce 64
+	OR  reduce 64
+	ASSIGN  reduce 64
+
+
+state 100
+	mult_expr : mult_expr . MULT exponent_expr  (62)
+	mult_expr : mult_expr . DIVIDE exponent_expr  (63)
+	mult_expr : mult_expr . MOD exponent_expr  (64)
+	add_expr : add_expr PLUS mult_expr .  (66)
+
+	MULT  shift 58
+	DIVIDE  shift 59
+	MOD  shift 60
+	RPAREN  reduce 66
+	RBRACKET  reduce 66
+	RBRACE  reduce 66
+	COMMA  reduce 66
+	SEMICOLON  reduce 66
+	PLUS  reduce 66
+	MINUS  reduce 66
+	LT  reduce 66
+	LE  reduce 66
+	GT  reduce 66
+	GE  reduce 66
+	EQ  reduce 66
+	NEQ  reduce 66
+	AND  reduce 66
+	OR  reduce 66
+	ASSIGN  reduce 66
+
+
+state 101
+	mult_expr : mult_expr . MULT exponent_expr  (62)
+	mult_expr : mult_expr . DIVIDE exponent_expr  (63)
+	mult_expr : mult_expr . MOD exponent_expr  (64)
+	add_expr : add_expr MINUS mult_expr .  (67)
+
+	MULT  shift 58
+	DIVIDE  shift 59
+	MOD  shift 60
+	RPAREN  reduce 67
+	RBRACKET  reduce 67
+	RBRACE  reduce 67
+	COMMA  reduce 67
+	SEMICOLON  reduce 67
+	PLUS  reduce 67
+	MINUS  reduce 67
+	LT  reduce 67
+	LE  reduce 67
+	GT  reduce 67
+	GE  reduce 67
+	EQ  reduce 67
+	NEQ  reduce 67
+	AND  reduce 67
+	OR  reduce 67
+	ASSIGN  reduce 67
+
+
+state 102
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr LT add_expr .  (69)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 69
+	RBRACKET  reduce 69
+	RBRACE  reduce 69
+	COMMA  reduce 69
+	SEMICOLON  reduce 69
+	LT  reduce 69
+	LE  reduce 69
+	GT  reduce 69
+	GE  reduce 69
+	EQ  reduce 69
+	NEQ  reduce 69
+	AND  reduce 69
+	OR  reduce 69
+	ASSIGN  reduce 69
+
+
+state 103
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr LE add_expr .  (70)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 70
+	RBRACKET  reduce 70
+	RBRACE  reduce 70
+	COMMA  reduce 70
+	SEMICOLON  reduce 70
+	LT  reduce 70
+	LE  reduce 70
+	GT  reduce 70
+	GE  reduce 70
+	EQ  reduce 70
+	NEQ  reduce 70
+	AND  reduce 70
+	OR  reduce 70
+	ASSIGN  reduce 70
+
+
+state 104
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr GT add_expr .  (71)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 71
+	RBRACKET  reduce 71
+	RBRACE  reduce 71
+	COMMA  reduce 71
+	SEMICOLON  reduce 71
+	LT  reduce 71
+	LE  reduce 71
+	GT  reduce 71
+	GE  reduce 71
+	EQ  reduce 71
+	NEQ  reduce 71
+	AND  reduce 71
+	OR  reduce 71
+	ASSIGN  reduce 71
+
+
+state 105
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr GE add_expr .  (72)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 72
+	RBRACKET  reduce 72
+	RBRACE  reduce 72
+	COMMA  reduce 72
+	SEMICOLON  reduce 72
+	LT  reduce 72
+	LE  reduce 72
+	GT  reduce 72
+	GE  reduce 72
+	EQ  reduce 72
+	NEQ  reduce 72
+	AND  reduce 72
+	OR  reduce 72
+	ASSIGN  reduce 72
+
+
+state 106
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr EQ add_expr .  (73)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 73
+	RBRACKET  reduce 73
+	RBRACE  reduce 73
+	COMMA  reduce 73
+	SEMICOLON  reduce 73
+	LT  reduce 73
+	LE  reduce 73
+	GT  reduce 73
+	GE  reduce 73
+	EQ  reduce 73
+	NEQ  reduce 73
+	AND  reduce 73
+	OR  reduce 73
+	ASSIGN  reduce 73
+
+
+state 107
+	add_expr : add_expr . PLUS mult_expr  (66)
+	add_expr : add_expr . MINUS mult_expr  (67)
+	comp_expr : comp_expr NEQ add_expr .  (74)
+
+	PLUS  shift 61
+	MINUS  shift 62
+	RPAREN  reduce 74
+	RBRACKET  reduce 74
+	RBRACE  reduce 74
+	COMMA  reduce 74
+	SEMICOLON  reduce 74
+	LT  reduce 74
+	LE  reduce 74
+	GT  reduce 74
+	GE  reduce 74
+	EQ  reduce 74
+	NEQ  reduce 74
+	AND  reduce 74
+	OR  reduce 74
+	ASSIGN  reduce 74
+
+
+state 108
+	comp_expr : comp_expr . LT add_expr  (69)
+	comp_expr : comp_expr . LE add_expr  (70)
+	comp_expr : comp_expr . GT add_expr  (71)
+	comp_expr : comp_expr . GE add_expr  (72)
+	comp_expr : comp_expr . EQ add_expr  (73)
+	comp_expr : comp_expr . NEQ add_expr  (74)
+	and_expr : and_expr AND comp_expr .  (76)
+
+	LT  shift 63
+	LE  shift 64
+	GT  shift 65
+	GE  shift 66
+	EQ  shift 67
+	NEQ  shift 68
+	RPAREN  reduce 76
+	RBRACKET  reduce 76
+	RBRACE  reduce 76
+	COMMA  reduce 76
+	SEMICOLON  reduce 76
+	AND  reduce 76
+	OR  reduce 76
+	ASSIGN  reduce 76
+
+
+state 109
+	and_expr : and_expr . AND comp_expr  (76)
+	or_expr : or_expr OR and_expr .  (78)
+
+	AND  shift 69
+	RPAREN  reduce 78
+	RBRACKET  reduce 78
+	RBRACE  reduce 78
+	COMMA  reduce 78
+	SEMICOLON  reduce 78
+	OR  reduce 78
+	ASSIGN  reduce 78
+
+
+state 110
+	or_expr : or_expr . OR and_expr  (78)
+	assign_expr : assign_expr ASSIGN or_expr .  (80)
+
+	OR  shift 70
+	RPAREN  reduce 80
+	RBRACKET  reduce 80
+	RBRACE  reduce 80
+	COMMA  reduce 80
+	SEMICOLON  reduce 80
+	ASSIGN  reduce 80
+
+
+state 111
+	param : name COLON . type  (19)
+
+	ARRAY  shift 8
+	BOOLEAN  shift 9
+	CHAR  shift 10
+	FUNCTION  shift 11
+	INTEGER  shift 12
+	STRING  shift 13
+	VOID  shift 14
+	.  error
+
+	type  goto 128
+
+
+state 112
+	type : FUNCTION type LPAREN param_list RPAREN .  (13)
+
+	.  reduce 13
+
+
+state 113
+	nonempty_param_list : param COMMA . nonempty_param_list  (17)
+
+	IDENTIFIER  shift 1
+	.  error
+
+	name  goto 72
+	nonempty_param_list  goto 129
+	param  goto 75
+
+
+state 114
+	matched_stmt : FOR LPAREN . opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN . opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN open_stmt  (34)
+	opt_expr : .  (40)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	SEMICOLON  reduce 40
+
+	name  goto 29
+	opt_expr  goto 130
+	expr  goto 31
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 115
+	matched_stmt : IF LPAREN . expr RPAREN matched_stmt ELSE matched_stmt  (24)
+	open_stmt : IF LPAREN . expr RPAREN stmt  (32)
+	open_stmt : IF LPAREN . expr RPAREN matched_stmt ELSE open_stmt  (33)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 131
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 116
+	matched_stmt : PRINT expr_list . SEMICOLON  (29)
+
+	SEMICOLON  shift 132
+	.  error
+
+
+state 117
+	matched_stmt : RETURN opt_expr . SEMICOLON  (28)
+
+	SEMICOLON  shift 133
+	.  error
+
+
+state 118
+	matched_stmt : LBRACE stmt_list . RBRACE  (31)
+
+	RBRACE  shift 134
+	.  error
+
+
+state 119
+	decl : name COLON type ASSIGN LBRACE stmt_list RBRACE .  (6)
+
+	.  reduce 6
+
+
+state 120
+	stmt_list : stmt stmt_list .  (20)
+
+	.  reduce 20
+
+
+state 121
+	matched_stmt : expr . SEMICOLON  (27)
+
+	SEMICOLON  shift 123
+	.  error
+
+
+state 122
+	matched_stmt : name COLON . type SEMICOLON  (25)
+	matched_stmt : name COLON . type ASSIGN expr SEMICOLON  (26)
+
+	ARRAY  shift 8
+	BOOLEAN  shift 9
+	CHAR  shift 10
+	FUNCTION  shift 11
+	INTEGER  shift 12
+	STRING  shift 13
+	VOID  shift 14
+	.  error
+
+	type  goto 135
+
+
+state 123
+	matched_stmt : expr SEMICOLON .  (27)
+
+	.  reduce 27
+
+
+state 124
+	expr_list : expr COMMA expr_list .  (37)
+
+	.  reduce 37
+
+
+state 125
+	primary_expr : name LPAREN opt_expr_list RPAREN .  (50)
+
+	.  reduce 50
+
+
+state 126
+	subscript_expr : name LBRACKET expr RBRACKET .  (53)
+
+	.  reduce 53
+
+
+state 127
+	subscript_expr : subscript_expr LBRACKET expr RBRACKET .  (52)
+
+	.  reduce 52
+
+
+state 128
+	param : name COLON type .  (19)
+
+	.  reduce 19
+
+
+state 129
+	nonempty_param_list : param COMMA nonempty_param_list .  (17)
+
+	.  reduce 17
+
+
+state 130
+	matched_stmt : FOR LPAREN opt_expr . SEMICOLON opt_expr SEMICOLON opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr . SEMICOLON opt_expr SEMICOLON opt_expr RPAREN open_stmt  (34)
+
+	SEMICOLON  shift 136
+	.  error
+
+
+state 131
+	matched_stmt : IF LPAREN expr . RPAREN matched_stmt ELSE matched_stmt  (24)
+	open_stmt : IF LPAREN expr . RPAREN stmt  (32)
+	open_stmt : IF LPAREN expr . RPAREN matched_stmt ELSE open_stmt  (33)
+
+	RPAREN  shift 137
+	.  error
+
+
+state 132
+	matched_stmt : PRINT expr_list SEMICOLON .  (29)
+
+	.  reduce 29
+
+
+state 133
+	matched_stmt : RETURN opt_expr SEMICOLON .  (28)
+
+	.  reduce 28
+
+
+state 134
+	matched_stmt : LBRACE stmt_list RBRACE .  (31)
+
+	.  reduce 31
+
+
+state 135
+	matched_stmt : name COLON type . SEMICOLON  (25)
+	matched_stmt : name COLON type . ASSIGN expr SEMICOLON  (26)
+
+	SEMICOLON  shift 138
+	ASSIGN  shift 139
+	.  error
+
+
+state 136
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON . opt_expr SEMICOLON opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr SEMICOLON . opt_expr SEMICOLON opt_expr RPAREN open_stmt  (34)
+	opt_expr : .  (40)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	SEMICOLON  reduce 40
+
+	name  goto 29
+	opt_expr  goto 140
+	expr  goto 31
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 137
+	matched_stmt : IF LPAREN expr RPAREN . matched_stmt ELSE matched_stmt  (24)
+	open_stmt : IF LPAREN expr RPAREN . stmt  (32)
+	open_stmt : IF LPAREN expr RPAREN . matched_stmt ELSE open_stmt  (33)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	stmt  goto 141
+	matched_stmt  goto 142
+	open_stmt  goto 84
+	name  goto 85
+	expr  goto 121
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 138
+	matched_stmt : name COLON type SEMICOLON .  (25)
+
+	.  reduce 25
+
+
+state 139
+	matched_stmt : name COLON type ASSIGN . expr SEMICOLON  (26)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	name  goto 29
+	expr  goto 143
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 140
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr . SEMICOLON opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr . SEMICOLON opt_expr RPAREN open_stmt  (34)
+
+	SEMICOLON  shift 144
+	.  error
+
+
+state 141
+	open_stmt : IF LPAREN expr RPAREN stmt .  (32)
+
+	.  reduce 32
+
+
+state 142
+	stmt : matched_stmt .  (23)
+	matched_stmt : IF LPAREN expr RPAREN matched_stmt . ELSE matched_stmt  (24)
+	open_stmt : IF LPAREN expr RPAREN matched_stmt . ELSE open_stmt  (33)
+
+	ELSE  shift 145
+	FALSE  reduce 23
+	FOR  reduce 23
+	IF  reduce 23
+	PRINT  reduce 23
+	RETURN  reduce 23
+	TRUE  reduce 23
+	LPAREN  reduce 23
+	LBRACE  reduce 23
+	RBRACE  reduce 23
+	MINUS  reduce 23
+	NOT  reduce 23
+	IDENTIFIER  reduce 23
+	INTEGER_LITERAL  reduce 23
+	CHARACTER_LITERAL  reduce 23
+	STRING_LITERAL  reduce 23
+
+
+state 143
+	matched_stmt : name COLON type ASSIGN expr . SEMICOLON  (26)
+
+	SEMICOLON  shift 146
+	.  error
+
+
+state 144
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON . opt_expr RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON . opt_expr RPAREN open_stmt  (34)
+	opt_expr : .  (40)
+
+	FALSE  shift 20
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 23
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	RPAREN  reduce 40
+
+	name  goto 29
+	opt_expr  goto 147
+	expr  goto 31
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 145
+	matched_stmt : IF LPAREN expr RPAREN matched_stmt ELSE . matched_stmt  (24)
+	open_stmt : IF LPAREN expr RPAREN matched_stmt ELSE . open_stmt  (33)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	matched_stmt  goto 148
+	open_stmt  goto 149
+	name  goto 85
+	expr  goto 121
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 146
+	matched_stmt : name COLON type ASSIGN expr SEMICOLON .  (26)
+
+	.  reduce 26
+
+
+state 147
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr . RPAREN matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr . RPAREN open_stmt  (34)
+
+	RPAREN  shift 150
+	.  error
+
+
+state 148
+	matched_stmt : IF LPAREN expr RPAREN matched_stmt ELSE matched_stmt .  (24)
+
+	.  reduce 24
+
+
+state 149
+	open_stmt : IF LPAREN expr RPAREN matched_stmt ELSE open_stmt .  (33)
+
+	.  reduce 33
+
+
+state 150
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN . matched_stmt  (30)
+	open_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN . open_stmt  (34)
+
+	FALSE  shift 20
+	FOR  shift 76
+	IF  shift 77
+	PRINT  shift 78
+	RETURN  shift 79
+	TRUE  shift 21
+	LPAREN  shift 22
+	LBRACE  shift 80
+	MINUS  shift 24
+	NOT  shift 25
+	IDENTIFIER  shift 1
+	INTEGER_LITERAL  shift 26
+	CHARACTER_LITERAL  shift 27
+	STRING_LITERAL  shift 28
+	.  error
+
+	matched_stmt  goto 151
+	open_stmt  goto 152
+	name  goto 85
+	expr  goto 121
+	primary_expr  goto 32
+	subscript_expr  goto 33
+	incr_expr  goto 34
+	negation_expr  goto 35
+	exponent_expr  goto 36
+	mult_expr  goto 37
+	add_expr  goto 38
+	comp_expr  goto 39
+	and_expr  goto 40
+	or_expr  goto 41
+	assign_expr  goto 42
+
+
+state 151
+	matched_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN matched_stmt .  (30)
+
+	.  reduce 30
+
+
+state 152
+	open_stmt : FOR LPAREN opt_expr SEMICOLON opt_expr SEMICOLON opt_expr RPAREN open_stmt .  (34)
+
+	.  reduce 34
+
+
+49 terminals, 28 nonterminals
+82 grammar rules, 153 states

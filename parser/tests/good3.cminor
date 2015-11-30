@@ -1,0 +1,10 @@
+main: function integer (argc: integer, argv: array [] string) = {
+	if ( argc < 3) 
+		print "incorrect usage";
+	
+
+else { print argv[2], " ", 18^2; x: char = 'c'; }
+
+	return 0;
+
+}

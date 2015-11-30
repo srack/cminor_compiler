@@ -1,0 +1,31 @@
+/* this has losts of nested if else */
+
+blah: function void (r: integer, s: array [] integer, size: integer) = {
+	i: integer = 0;
+	for ( ; i < size; i = i + 2%1) {		
+		if (r - s[i] > 0) {
+			x: char = '\0';
+			if (r < size) {
+				s[r] = i;
+			}
+
+		}
+		else {
+			j: integer = i;
+			for ( ; j < size; j++) // also note no brackets here because if is one statement
+				if (!false) {
+					s[j] = 17*4;
+				}
+			if (s[j] > 10) 
+				return;
+
+		}
+
+
+	}
+
+
+
+
+
+}

@@ -1,0 +1,15 @@
+/* this program tries to define a function within a function */
+
+a: function void (c: integer, d: string) = {
+
+	b: char = 'b';
+	print b, " ", d;
+
+	secondFunc: function integer (s: integer, t: integer) = {
+		return s+1;
+	}
+
+	return;
+
+
+}

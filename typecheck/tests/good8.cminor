@@ -1,0 +1,20 @@
+// lots of the same name nested in different brackets
+x: integer = 5;
+
+
+f: function void () = {
+	x: string = "hello";
+
+	{
+		x: char = '\n';
+	}
+	print x;
+
+	i: integer = 0;
+	for (; ; ) {
+		x: boolean = false;
+		if (!x) return;
+	}
+
+
+}

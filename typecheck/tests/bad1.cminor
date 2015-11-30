@@ -1,0 +1,15 @@
+x: integer = 10*2;
+
+main: function integer (x: integer) = {
+	if (x*5) return 3*(6^2);
+	i: integer;
+	for (i = 0; i < 50; i++) {
+		i++;
+		x++;
+		// does the \n print out correctly?
+		print "hello\nworld ", x;
+		if (x*5) {
+			return "hello";
+		}
+	}
+}

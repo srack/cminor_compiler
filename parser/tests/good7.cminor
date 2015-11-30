@@ -1,0 +1,15 @@
+/* this has a function declaration with the definition below */
+
+double: function integer(x: integer);
+
+
+main: function void () = {
+	y: integer = 5;
+	print "y: ", y;
+	print "2*y: ", double(y);
+}
+
+
+double: function integer(x: integer) = {
+	return x*2;
+}

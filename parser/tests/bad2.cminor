@@ -1,0 +1,12 @@
+// this has an expression at the global scope
+
+a: integer = 20;
+b: integer = 30;
+c: integer;
+c = a + b;
+
+main: function void () = {
+	print c;
+	return;
+
+}

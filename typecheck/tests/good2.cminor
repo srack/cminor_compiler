@@ -1,0 +1,16 @@
+/* this one is going to test out function declaration before definition */
+
+func: function void (x: integer);
+
+main: function integer () = {
+	func(1);
+	return 2;
+}
+
+func: function void (x: integer) = {
+	b: array [2] integer = {6^2, 7*(x+1)};
+	
+	print b[1];
+
+
+}

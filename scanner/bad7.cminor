@@ -1,0 +1,6 @@
+/* this one is similar to bad6.cminor, but only puts decimal point at end of number -- no actual decimal places */
+function: main () {
+	a: integer = -82;
+	a--;
+	b: integer = 70.;
+}

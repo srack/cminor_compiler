@@ -1,0 +1,6 @@
+/* this is an interesting expression */
+
+f: function void () = {
+	x: integer = 7++^5*5;
+
+}

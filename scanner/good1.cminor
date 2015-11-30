@@ -1,0 +1,7 @@
+square: function integer (x: integer) = {
+	return x^2;
+}
+
+main: function integer()={
+	puts("hello world");
+}

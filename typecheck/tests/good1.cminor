@@ -1,0 +1,13 @@
+/* this one is going to test out array initialization */
+
+func: function void (x: integer) = {
+	if (x <= 100) {
+		a: array [3] array [2] char = {{'a', 'b'}, {'c', 'd'}, {'e', 'f'}};
+	}
+
+	b: array [2] integer = {6^2, 7*(x+1)};
+	
+	print b[1];
+
+
+}

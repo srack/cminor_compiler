@@ -1,0 +1,14 @@
+/* this has a print statement with no expressions in it */
+aaa: function integer(g: integer, f: integer, r: boolean) = {
+	if (r) {
+		if (f != g) 
+			print "not ", "equal:(";
+		else
+			print;
+
+	
+	}
+	
+	return 0;
+
+}

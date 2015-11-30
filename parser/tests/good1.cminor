@@ -1,0 +1,19 @@
+myInteger: integer = 16;
+
+main: function char (j: string) = {
+	x: integer;
+	c: char = 't';
+	for (x = 7*8; x < 100; x++) {
+		if (myInteger != x) {
+			p: integer = x%6;
+			if (p == 5) {
+				c = 'g';
+			} 
+		}
+		else 
+			c = '\n';
+		
+	}
+
+	return c;
+}

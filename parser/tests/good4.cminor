@@ -1,0 +1,16 @@
+main: function integer()={
+	grid: array [10] array [10] integer;
+
+	i: integer;
+	j: integer;
+	
+	// traverse through the grid object to initialize its values
+	for (i = 0; i < 10; i++) {
+		for (j = 0; j < 10; j++) {
+			// double subscript
+			grid[i][j] = 0;
+		}
+	}
+
+
+}

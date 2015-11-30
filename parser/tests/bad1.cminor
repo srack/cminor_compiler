@@ -1,0 +1,8 @@
+/* missing equal sign for function definition */
+
+main: function integer (x: integer, ar: array[] integer) {
+	i: integer;
+	for (i = 0; i < 50; i++) {
+		x++;
+	}
+}

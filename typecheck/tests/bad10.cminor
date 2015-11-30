@@ -1,0 +1,12 @@
+// try to test equality of arrays
+f: function integer () = {
+	x: array [15] boolean;
+	y: array [15] boolean;	
+
+
+	if (x == y) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
