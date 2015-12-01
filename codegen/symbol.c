@@ -20,3 +20,10 @@ struct symbol * symbol_create( symbol_t kind, int which, struct type *type, char
 	return s;
 }
 
+char * symbol_code(struct symbol *s) {
+	// if global, just return the name
+	if (s->kind == SYMBOL_GLOBAL) return s->name;
+
+	return "";
+
+}

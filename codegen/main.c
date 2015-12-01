@@ -105,14 +105,32 @@ int codeGen(char *inFile, char *outFile) {
 		return 1;
 	}
 
-	FILE *f = fopen(outFile, "w");
-	if (!f) {
-		fprintf(stderr, "error: cannot open %s to write assembly\n", outFile);
+	// check if there are any arrays in the source file -- if so, exit with error
+	if (decl_checkForArrays(program)) {
+		printf("codegen error: arrays not supported\n");
 		return 1;
 	}
 
-	decl_codegen(program, f);
+	// check if there are any function calls with more than 6 argument -- if so, exit with error
+	if (decl_tooManyArgs(program)) {
+		printf("codegen error: too many arguments\n");
+		return 1;
+	}
 
+	// open the file for outputting the assembly	
+	FILE *f = fopen(outFile, "w");
+	if (!f) {
+		fprintf(stderr, "error: cannot open %s to write assembly code\n", outFile);
+		return 1;
+	}
+
+	// finally, actually generate the code
+	decl_codegen(program, f);
+	
+	// close the assembly file
 	fclose(f);
+
+	// success if got here
 	return 0;
 }
+

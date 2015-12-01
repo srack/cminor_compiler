@@ -50,7 +50,7 @@ void param_list_resolve( struct param_list *p, struct hash_table *h, int whichSo
 	}
 
 	// add the name to the symbol table in the current scope
-	struct symbol *sym = symbol_create(SYMBOL_PARAM, whichSoFar, p->type, 0, 0);
+	struct symbol *sym = symbol_create(SYMBOL_PARAM, whichSoFar, p->type, 0, 0/*, 0*/);
 	++whichSoFar;
 	scope_bind(h, p->name, sym);
 

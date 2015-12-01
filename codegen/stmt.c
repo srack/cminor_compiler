@@ -228,3 +228,15 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 
 
 }
+
+int stmt_checkForArrays(struct stmt *s) {
+	if (!s) return 0;
+
+	if (decl_checkForArrays(s->decl)) return 1;
+	
+	if (stmt_checkForArrays(s->body)) return 1;
+
+	if (stmt_checkForArrays(s->else_body)) return 1;
+
+	return stmt_checkForArrays(s->next);
+}

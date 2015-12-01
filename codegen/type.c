@@ -115,3 +115,20 @@ void type_delete( struct type *t ) {
 	// finally, free the root of the type tree
 	free(t);
 }
+
+int type_checkForArrays( struct type *t) {
+	if (!t) return 0;
+
+	if (t->kind == TYPE_ARRAY) return 1;
+
+	if (type_checkForArrays(t->subtype)) return 1;
+	
+	struct param_list *p = t->params;
+	while (p) {
+		if (type_checkForArrays(p->type)) return 1;
+		p = p->next;
+	}
+
+	return 0;
+
+}

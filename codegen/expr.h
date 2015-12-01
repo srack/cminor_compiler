@@ -57,6 +57,8 @@ struct expr {
 
 	/* used for expr list */
 	struct expr *next;
+
+	int reg;
 };
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right );

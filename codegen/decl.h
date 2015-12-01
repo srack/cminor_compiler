@@ -10,9 +10,8 @@
 #include "type.h"
 #include "stmt.h"
 #include "expr.h"
-#include "scope.h"
 #include "hash_table.h"
-#include "symbol.h"
+#include "scope.h"
 #include "register.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,6 +32,8 @@ void decl_print( struct decl *d, int indent );
 void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint);
 void decl_typecheck( struct decl *d);
 void decl_codegen( struct decl *d, FILE *f);
+int decl_checkForArrays(struct decl *d);
+int decl_tooManyArgs(struct decl *d);
 #endif
 
 

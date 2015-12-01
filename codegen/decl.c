@@ -45,6 +45,7 @@ void decl_print( struct decl *d, int indent ) {
 
 /* function:	decl_resolve
  * purpose:	recursive name resolution for declaration tree <d>
+ * 		in which the declaration is found (if not global)
  */
 void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint) {
 	// null check
@@ -143,4 +144,31 @@ void decl_typecheck( struct decl *d ) {
 void decl_codegen( struct decl *d, FILE *f ) {
 
 
+}
+
+int decl_checkForArrays(struct decl *d) {
+	if (!d) return 0;
+
+	if (type_checkForArrays(d->type)) return 1;
+
+	if (d->code && stmt_checkForArrays(d->code)) return 1;
+
+	return decl_checkForArrays(d->next);
+
+}
+
+int decl_tooManyArgs(struct decl *d) {
+	if (!d) return 0;
+
+	// check number of parameters with each declaration, if there are parameters
+	struct param_list *p = d->type->params;
+
+	int count = 0;
+	while(p) {
+		++count;
+		p = p->next;
+	}
+	if (count > 6) return 1;
+
+	return decl_tooManyArgs(d->next);
 }
