@@ -81,7 +81,7 @@ int nameResolve(char *filename, int shouldPrint) {
 
 	struct hash_table *h = hash_table_create(0, 0, 0);
 	/// name resolution ///
-	decl_resolve(program, &h, 0, shouldPrint);
+	decl_resolve(program, &h, 0, shouldPrint, 0);
 
 	// return appropriate value
 	return error_count > 0;

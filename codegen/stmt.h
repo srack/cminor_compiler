@@ -35,8 +35,8 @@ struct stmt {
 
 struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body, struct stmt *next );
 void stmt_print( struct stmt *s, int indent, int below_ifFor );
-void stmt_resolve( struct stmt *s, struct hash_table **h, int whichSoFar, int shouldPrint );
+void stmt_resolve( struct stmt *s, struct hash_table **h, int whichSoFar, int shouldPrint, struct symbol *funcIn );
 void stmt_typecheck( struct stmt * s, struct decl * d );
-void stmt_codegen( struct stmt *s, FILE *f);
 int stmt_checkForArrays(struct stmt *s);
+void stmt_codegen( struct stmt *s, FILE *f);
 #endif

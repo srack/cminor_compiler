@@ -29,11 +29,11 @@ struct decl {
 
 struct decl * decl_create( char *name, struct type *t, struct expr *v, struct stmt *c, struct decl *next );
 void decl_print( struct decl *d, int indent );
-void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint);
+void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint, struct symbol *funcIn);
 void decl_typecheck( struct decl *d);
-void decl_codegen( struct decl *d, FILE *f);
 int decl_checkForArrays(struct decl *d);
 int decl_tooManyArgs(struct decl *d);
+void decl_codegen( struct decl *d, FILE *f);
 #endif
 
 

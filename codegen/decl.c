@@ -47,7 +47,7 @@ void decl_print( struct decl *d, int indent ) {
  * purpose:	recursive name resolution for declaration tree <d>
  * 		in which the declaration is found (if not global)
  */
-void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint) {
+void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int shouldPrint, struct symbol *funcIn) {
 	// null check
 	if (!d) return;
 
@@ -76,9 +76,9 @@ void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int sh
 		// add the name to the symbol table in the current scope
 		if (scope_level(*h) == 1) {
 			// we are at global scope
-			sym = symbol_create(SYMBOL_GLOBAL, 0, d->type, d->name, (d->code ? 1 : 0));
+			sym = symbol_create(SYMBOL_GLOBAL, 0, d->type, d->name, (d->code ? 1 : 0), 0);
 		} else {
-			sym = symbol_create(SYMBOL_LOCAL, whichSoFar, d->type, 0, (d->code ? 1 : 0));
+			sym = symbol_create(SYMBOL_LOCAL, whichSoFar, d->type, 0, (d->code ? 1 : 0), funcIn);
 			++whichSoFar;	// another local has been added
 		}
 		d->symbol = sym;
@@ -92,12 +92,12 @@ void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int sh
 	if (d->code) {
 		scope_enter(h);
 		param_list_resolve(d->type->params, *h, 0, shouldPrint);
-		stmt_resolve(d->code, h, 0, shouldPrint);	// whichSoFar gets reset for each function
+		stmt_resolve(d->code, h, 0, shouldPrint, d->symbol);	// whichSoFar gets reset for each function
 		scope_leave(h);	
 	}
 
 	// resolve the next decl in the list
-	decl_resolve(d->next, h, whichSoFar, shouldPrint);	
+	decl_resolve(d->next, h, whichSoFar, shouldPrint, funcIn);	
 }
 
 /* function:	decl_typecheck
@@ -141,11 +141,6 @@ void decl_typecheck( struct decl *d ) {
 	decl_typecheck(d->next);
 }
 
-void decl_codegen( struct decl *d, FILE *f ) {
-
-
-}
-
 int decl_checkForArrays(struct decl *d) {
 	if (!d) return 0;
 
@@ -172,3 +167,9 @@ int decl_tooManyArgs(struct decl *d) {
 
 	return decl_tooManyArgs(d->next);
 }
+
+void decl_codegen( struct decl *d, FILE *f ) {
+
+
+}
+

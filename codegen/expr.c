@@ -5,6 +5,8 @@
 #include "expr.h"
 #include <string.h>
 
+int string_literal_count = 0;
+
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr *e = malloc(sizeof(*e));
 	e->kind = kind;
@@ -770,6 +772,11 @@ struct type *expr_typecheck( struct expr * e ) {
 	}
 }
 
+/* function:	expr_isconst
+ * purpose:	returns 1 if the expression is a literal value or an array 
+ * 		intializer of literal values, used to determine if an expression
+ * 		is valid at a global declaraion
+ */
 int expr_isconst( struct expr *e ) {
 	// if both children are null, then it is a literal constant
 	if (!e->left && !e->right) return 1;
@@ -788,7 +795,105 @@ int expr_isconst( struct expr *e ) {
 
 }
 
+/* function:	expr_codegen
+ * purpose:	recursively traverses expression tree <e> to generate
+ * 		the code for it
+ */
 void expr_codegen (struct expr *e, FILE *f) {
+	if (!e) return;
 
+	char *s;
+
+	switch (e->kind) {
+		case EXPR_NAME:
+			e->reg = register_alloc();
+			s = symbol_code(e->symbol);
+			fprintf(f, "MOVQ %s, %s\n", s, register_name(e->reg));
+			free(s);
+			break;
+		case EXPR_INTEGER_LITERAL:
+		case EXPR_CHARACTER_LITERAL:
+		case EXPR_BOOLEAN_LITERAL:
+			e->reg = register_alloc();
+			fprintf(f, "MOVQ $%d, %s\n", e->literal_value, register_name(e->reg));
+			break;
+		case EXPR_STRING_LITERAL:
+			e->reg = register_alloc();
+			// switch to data section to add the string literal as a global
+			fprintf(f, ".data\n");
+			fprintf(f, "STR%d:\n", string_literal_count);
+			fprintf(f, ".string \"%s\"\n", e->string_literal);
+			// switch back to code section
+			fprintf(f, ".text\n");
+			fprintf(f, "LEA STR%d, %s\n", string_literal_count, register_name(e->reg));
+			++string_literal_count;
+			break;
+		case EXPR_GROUPING:
+			// generate the left subtree
+			expr_codegen(e->left, f);
+			// then pass it up the tree -- nothing to generate for a grouping
+			e->reg = e->left->reg;
+			break;
+		case EXPR_ARRAY_INIT:
+			// not supported in code generation
+			break;
+		case EXPR_SUBSCRIPT:
+			// not supported in code generation
+			break;
+		case EXPR_FUNCTION_CALL:
+			// TODO
+			break;
+		case EXPR_INCREMENT:	
+		case EXPR_DECREMENT:
+			e->reg = register_alloc();
+			expr_codegen(e->left, f);
+			fprintf(f, "MOVQ %s, %s\n", register_name(e->left->reg), register_name(e->reg));
+			if (e->kind == EXPR_INCREMENT) 
+				fprintf(f, "ADDQ $1, %s\n", register_name(e->left->reg));
+			else 
+				fprintf(f, "SUBQ $1, %s\n", register_name(e->left->reg));
+			s = symbol_code(e->left->symbol);
+			fprintf(f, "MOVQ %s, %s\n", register_name(e->left->reg), s);
+			free(s);
+			register_free(e->left->reg);
+			break;
+		case EXPR_NEGATION:
+			expr_codegen(e->left, f);
+			fprintf(f, "SUBQ $0, %s\n", register_name(e->left->reg));
+			e->reg = e->left->reg;
+			break;
+		case EXPR_NOT:
+			break;
+		case EXPR_EXPONENT:
+			break;
+		case EXPR_MULT:
+			break;
+		case EXPR_DIV:
+			break;
+		case EXPR_MOD:
+			break;
+		case EXPR_ADD:
+			break;
+		case EXPR_SUB:
+			break;
+		case EXPR_LT:
+			break;
+		case EXPR_LE:
+			break;
+		case EXPR_GT:
+			break;
+		case EXPR_GE:
+			break;
+		case EXPR_EQ:
+			break;
+		case EXPR_NE:
+			break;
+		case EXPR_AND:
+			break;
+		case EXPR_OR:
+			break;
+		case EXPR_ASSIGN:
+			break;
+	}
 
 }

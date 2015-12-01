@@ -23,7 +23,8 @@ struct symbol {
 	struct type *type;
 	char *name;
 	int funcDefined;
+	struct symbol *funcIn;	// symbol for function in which this symbol is
 };
-struct symbol * symbol_create( symbol_t kind, int which, struct type *type, char *name, int funcDefined);
-//char * symbol_code(struct symbol *s);
+struct symbol * symbol_create( symbol_t kind, int which, struct type *type, char *name, int funcDefined, struct symbol *funcIn);
+char * symbol_code(struct symbol *s);
 #endif

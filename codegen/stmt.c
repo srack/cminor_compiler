@@ -100,13 +100,13 @@ void stmt_print( struct stmt *s, int indent, int bodyIfFor ) {
  * 		is used to fill in the which parameter for new symbol table entries, indicates how
  * 		many of each local have been seen so far in the current function
  */
-void stmt_resolve(struct stmt *s, struct hash_table **h, int whichSoFar, int shouldPrint) {
+void stmt_resolve(struct stmt *s, struct hash_table **h, int whichSoFar, int shouldPrint, struct symbol *funcIn) {
 	// null check
 	if (!s) return;
 
 	switch (s->kind) {
 		case STMT_DECL:
-			decl_resolve(s->decl, h, whichSoFar, shouldPrint);	
+			decl_resolve(s->decl, h, whichSoFar, shouldPrint, funcIn);	
 			++whichSoFar;
 			break;
 		case STMT_EXPR:
@@ -114,14 +114,14 @@ void stmt_resolve(struct stmt *s, struct hash_table **h, int whichSoFar, int sho
 			break;
 		case STMT_IF_ELSE:
 			expr_resolve(s->init_expr, *h, shouldPrint);
-			stmt_resolve(s->body, h, whichSoFar, shouldPrint);
-			stmt_resolve(s->else_body, h, whichSoFar, shouldPrint);
+			stmt_resolve(s->body, h, whichSoFar, shouldPrint, funcIn);
+			stmt_resolve(s->else_body, h, whichSoFar, shouldPrint, funcIn);
 			break;
 		case STMT_FOR:
 			expr_resolve(s->init_expr, *h, shouldPrint);
 			expr_resolve(s->expr, *h, shouldPrint);
 			expr_resolve(s->next_expr, *h, shouldPrint);
-			stmt_resolve(s->body, h, whichSoFar, shouldPrint);
+			stmt_resolve(s->body, h, whichSoFar, shouldPrint, funcIn);
 			break;
 		case STMT_PRINT:
 			// will resolve anything in that expression list
@@ -132,12 +132,12 @@ void stmt_resolve(struct stmt *s, struct hash_table **h, int whichSoFar, int sho
 			break;
 		case STMT_BLOCK:
 			scope_enter(h);
-			stmt_resolve(s->body, h, whichSoFar, shouldPrint);
+			stmt_resolve(s->body, h, whichSoFar, shouldPrint, funcIn);
 			scope_leave(h);
 			break;
 	}
 
-	stmt_resolve(s->next, h, whichSoFar, shouldPrint);
+	stmt_resolve(s->next, h, whichSoFar, shouldPrint, funcIn);
 }
 
 /* function:	stmt_typecheck
@@ -224,11 +224,6 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 	stmt_typecheck(s->next, d);
 }
 
-void stmt_codegen( struct stmt *s, FILE *f) {
-
-
-}
-
 int stmt_checkForArrays(struct stmt *s) {
 	if (!s) return 0;
 
@@ -240,3 +235,9 @@ int stmt_checkForArrays(struct stmt *s) {
 
 	return stmt_checkForArrays(s->next);
 }
+
+void stmt_codegen( struct stmt *s, FILE *f) {
+
+
+}
+
