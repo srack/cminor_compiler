@@ -4,7 +4,6 @@
  */
 
 #include "symbol.h"
-#include <string.h>
 
 struct symbol * symbol_create( symbol_t kind, int which, struct type *type, char *name, int funcDefined, struct symbol *funcIn ) {
 	struct symbol *s = malloc(sizeof(*s));
@@ -49,7 +48,7 @@ char * symbol_code(struct symbol *s) {
 		int totalParams = 0;
 
 		// if it is a local, then it will have a non-null funcIn member
-		struct param_list *p = s->funcIn->type->params;
+	/*	struct param_list *p = s->funcIn->type->params;
 		while(p) {
 			++totalParams;
 			p = p->next;
@@ -58,6 +57,6 @@ char * symbol_code(struct symbol *s) {
 		char *buffer = malloc(sizeof(char)*32);
 		sprintf(buffer, "%d(%%rbp)\0", -8*(totalParams + s->which + 1));
 		return buffer;
-	}
+	*/}
 
 }

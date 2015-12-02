@@ -5,6 +5,8 @@
 
 #include "stmt.h"
 
+int label_counter = 0;
+
 /* Function: stmt_create
  */
 struct stmt * stmt_create( stmt_kind_t kind, struct decl *d, struct expr *init_expr, struct expr *e, struct expr *next_expr, struct stmt *body, struct stmt *else_body, struct stmt *next ) {
@@ -237,7 +239,31 @@ int stmt_checkForArrays(struct stmt *s) {
 }
 
 void stmt_codegen( struct stmt *s, FILE *f) {
+	if (!s) return;
 
+	switch (s->kind) {
+		case STMT_DECL:
+			decl_codegen(s->decl, f);
+			break;
+		case STMT_EXPR:
+			expr_codegen(s->expr, f);
+			register_free(s->expr->reg);
+			break;
+		case STMT_IF_ELSE:
+			// label_counter global
+			break;
+		case STMT_FOR:
+			break;
+		case STMT_PRINT:
+			break;
+		case STMT_RETURN:
+			break;
+		case STMT_BLOCK:
+			stmt_codegen(s->body, f);
+			break;
+	}
+
+	stmt_codegen(s->next, f);
 
 }
 

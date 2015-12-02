@@ -8,7 +8,7 @@
 #define SYMBOL_H
 
 #include "type.h"
-#include "decl.h"
+#include <string.h>
 
 typedef enum {
 	SYMBOL_LOCAL,
