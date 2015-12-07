@@ -1,0 +1,5 @@
+main: function integer() = {
+	x: integer = 5;
+	return x+5;
+
+}

@@ -1,0 +1,9 @@
+blah: function integer (y: integer) = {
+	return 2;
+}
+
+main: function integer() = {
+	x: integer = 5;
+	print x, " hello";
+	return blah(x);		
+}
