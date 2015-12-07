@@ -502,6 +502,14 @@ struct type *expr_typecheck( struct expr * e ) {
 				printf(")\n");
 				++error_count;	
 			}
+
+			// conver this exponent expression into a function call
+			e->kind = EXPR_FUNCTION_CALL;
+			e->name = "integer_power";
+			// add e->right to the arguments list
+			e->left->next = e->right;
+			e->right = 0;
+
 			type_delete(a); 
 			type_delete(b);
 			// even if both sides are wrong, want to return an integer
@@ -687,7 +695,14 @@ struct type *expr_typecheck( struct expr * e ) {
 				expr_print(e->right);
 				printf(")\n");
 				++error_count;
-			}	
+			} else if (a->kind == TYPE_STRING) {
+				// convert it into a function call of strcmp
+				e->kind = EXPR_FUNCTION_CALL;
+				e->name = "strcmp";
+				struct expr *args = e->left;
+				args->next = e->right;
+				e->left = args;
+			}
 			type_delete(a);
 			type_delete(b);	
 			return type_create(TYPE_BOOLEAN, 0, 0, 0);
@@ -710,7 +725,15 @@ struct type *expr_typecheck( struct expr * e ) {
 				expr_print(e->right);
 				printf(")\n");
 				++error_count;
-			}	
+			} else if (a->kind == TYPE_STRING) {
+				// convert it into a function call of strcmp
+				e->kind = EXPR_FUNCTION_CALL;
+				e->name = "strcmp";
+				struct expr *args = e->left;
+				args->next = e->right;
+				e->left = args;
+			}
+			type_delete(a);
 			type_delete(a);
 			type_delete(b);	
 			return type_create(TYPE_BOOLEAN, 0, 0, 0);

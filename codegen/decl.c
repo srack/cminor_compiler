@@ -130,8 +130,6 @@ void decl_typecheck( struct decl *d ) {
 		}
 	}
 
-	// maybe check if it is global -- then needs to be constant
-
 	// if it is a function declaration, do a typecheck on the code
 	// pass in the return type of the declaration to be compared on
 	// return statements

@@ -149,7 +149,11 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 	if (!s) return;
 
 	struct type *t;
-	struct expr *e;	// for iterating through elements in the print statement
+	// for iterating through elements in the print statement
+	struct expr *e;
+	// for converting elements in print statement into function calls
+	struct stmt *s_next;
+	struct stmt *s_added;	
 
 	switch (s->kind) {
 		case STMT_DECL:
@@ -192,6 +196,9 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 		case STMT_PRINT:
 			// all expressions in a print statement can be of any type, EXCEPT void
 			e = s->expr;
+
+			s_next = s->next;		
+
 			// note that the list will be traversed iteratively here, instead of recursively checking through expr_typecheck since
 			// 	it has a return type that may be different for each of the expressions in the list
 			while (e) {
@@ -202,7 +209,36 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 					printf(") as part of a print statement\n");
 					++error_count;
 				}
+				// now, convert each into the appropriate function call
+				s->kind = STMT_EXPR;
+				s->expr->kind = EXPR_FUNCTION_CALL;
+				switch(t->kind) {
+					case TYPE_INTEGER:
+						s->expr->name = "print_integer";
+						break;
+					case TYPE_STRING:
+						s->expr->name = "print_string";
+						break;
+					case TYPE_BOOLEAN:
+						s->expr->name = "print_boolean";
+						break;
+					case TYPE_CHARACTER:
+						s->expr->name = "print_character";
+						break;
+					default:
+						// shouldn't happen
+						printf("this is probably a problem -- converting print statement to function calls\n");
+						break;
+				}
+				s->expr->left = e;
+
 				e = e->next;
+				if (e) {
+					s->next = stmt_create(STMT_EXPR, 0, 0, 0, 0, 0, 0, 0);
+					s = s->next;
+				} else {
+					s->next = s_next;
+				}
 			}
 			break;
 		case STMT_RETURN:
@@ -253,10 +289,12 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 			// label_counter global
 			break;
 		case STMT_FOR:
+			
 			break;
 		case STMT_PRINT:
 			break;
 		case STMT_RETURN:
+			// generate postamble of function
 			break;
 		case STMT_BLOCK:
 			stmt_codegen(s->body, f);
