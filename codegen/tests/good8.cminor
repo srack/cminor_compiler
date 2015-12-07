@@ -1,0 +1,5 @@
+main: function integer() = {
+	x: string = "hello";
+	print x == "hello";
+	return 5^3;		
+}

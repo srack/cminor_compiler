@@ -696,12 +696,13 @@ struct type *expr_typecheck( struct expr * e ) {
 				printf(")\n");
 				++error_count;
 			} else if (a->kind == TYPE_STRING) {
-				// convert it into a function call of strcmp
-				e->kind = EXPR_FUNCTION_CALL;
-				e->name = "strcmp";
+				// convert it into a function call of strcmp, but also have to NOT
+				//  the result of this call since it returns 0 on a match and 1 or -1
+				//  on no match
+				e->kind = EXPR_NOT;
 				struct expr *args = e->left;
 				args->next = e->right;
-				e->left = args;
+				e->left = expr_create_function_call("strcmp", args);
 			}
 			type_delete(a);
 			type_delete(b);	
@@ -902,6 +903,9 @@ void expr_codegen (struct expr *e, FILE *f) {
 		case EXPR_MOD:
 			break;
 		case EXPR_NOT:
+			expr_codegen(e->left, f);
+			fprintf(f, "NOT %s\n", register_name(e->left->reg));
+			e->reg = e->left->reg;
 			break;
 		case EXPR_LT:
 			break;

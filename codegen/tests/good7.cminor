@@ -1,0 +1,4 @@
+main: function integer() = {
+	x: integer = 5;
+	return 5^3;		
+}
