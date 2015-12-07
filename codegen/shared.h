@@ -9,5 +9,7 @@
 #include <stdio.h>
 
 void printIndent(int indent);
+void preamble_codegen(FILE *f, int numArgs, int numLocals);
+void postamble_codegen(FILE *f);
 
 #endif

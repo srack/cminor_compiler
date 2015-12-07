@@ -108,8 +108,9 @@ void stmt_resolve(struct stmt *s, struct hash_table **h, int whichSoFar, int sho
 
 	switch (s->kind) {
 		case STMT_DECL:
-			decl_resolve(s->decl, h, whichSoFar, shouldPrint, funcIn);	
+			decl_resolve(s->decl, h, whichSoFar, shouldPrint, funcIn);
 			++whichSoFar;
+			funcIn->numLocals = whichSoFar;	
 			break;
 		case STMT_EXPR:
 			expr_resolve(s->expr, *h, shouldPrint);
@@ -211,7 +212,9 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 				}
 				// now, convert each into the appropriate function call
 				s->kind = STMT_EXPR;
-				s->expr->kind = EXPR_FUNCTION_CALL;
+				
+				// have to create this extra node to move the original expression down
+				s->expr = expr_create_function_call("", e);
 				switch(t->kind) {
 					case TYPE_INTEGER:
 						s->expr->name = "print_integer";
@@ -227,10 +230,9 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 						break;
 					default:
 						// shouldn't happen
-						printf("this is probably a problem -- converting print statement to function calls\n");
+						printf("bug in code: converting print statement to function calls\n");
 						break;
 				}
-				s->expr->left = e;
 
 				e = e->next;
 				if (e) {
@@ -238,6 +240,7 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 					s = s->next;
 				} else {
 					s->next = s_next;
+					break;
 				}
 			}
 			break;
@@ -285,19 +288,33 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 			expr_codegen(s->expr, f);
 			register_free(s->expr->reg);
 			break;
+		////// TODO /////
 		case STMT_IF_ELSE:
 			// label_counter global
 			break;
-		case STMT_FOR:
-			
-			break;
-		case STMT_PRINT:
+		///// TODO //////
+		case STMT_FOR:	
 			break;
 		case STMT_RETURN:
+			// if there is an expression, generate code for it 
+			//  and put it in rax
+			if (s->expr) {
+				expr_codegen(s->expr, f);
+				fprintf(f, "MOV %s, %%rax\n", register_name(s->expr->reg));
+				register_free(s->expr->reg);
+			}
+
 			// generate postamble of function
+			postamble_codegen(f);
 			break;
 		case STMT_BLOCK:
 			stmt_codegen(s->body, f);
+			break;
+
+		case STMT_PRINT:
+			// note this shouldn't happen because it will have been 
+			//  converted into function call(s)
+			printf("bug in code: stmt_print should not exist by codegen step\n");
 			break;
 	}
 

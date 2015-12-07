@@ -7,7 +7,7 @@ cminor: y.tab.o lex.yy.o shared.o decl.o expr.o param_list.o stmt.o type.o symbo
 
 # build all object files
 %.o: %c *.h
-	gcc -c $< -o $@
+	gcc -c -g $< -o $@
 
 # generate scanner files using flex
 lex.yy.c lex.yy.h: scanner.l y.tab.h

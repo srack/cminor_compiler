@@ -11,19 +11,19 @@ int regs [16] = { /*rax*/ 1, /*rbx*/ 0, /*rcx*/ 1, /*rdx*/ 1, /*rsi*/ 1, /*rdi*/
 const char *register_name(int r) {
 	switch (r) {
 		case 1:
-			return "%%rbx";
+			return "%rbx";
 		case 10:
-			return "%%r10";
+			return "%r10";
 		case 11:
-			return "%%r11";
+			return "%r11";
 		case 12:
-			return "%%r12";
+			return "%r12";
 		case 13:
-			return "%%r13";
+			return "%r13";
 		case 14:
-			return "%%r14";
+			return "%r14";
 		case 15:
-			return "%%r15";
+			return "%r15";
 		default:
 			// should not happen, so put in an error message for debugging
 			printf("codegen error: asking for invalid register number: %d\n", r);
@@ -33,7 +33,7 @@ const char *register_name(int r) {
 
 int register_alloc() {
 	int i;
-	for (i = 0; i < 16; ++i) {
+	for (i = 1; i < 16; ++i) {
 		if (regs[i] == 0) {
 			// allocate this one
 			regs[i] = 1;

@@ -80,6 +80,7 @@ void decl_resolve( struct decl *d, struct hash_table **h, int whichSoFar, int sh
 		} else {
 			sym = symbol_create(SYMBOL_LOCAL, whichSoFar, d->type, 0, (d->code ? 1 : 0), funcIn);
 			++whichSoFar;	// another local has been added
+			funcIn->numLocals = whichSoFar;
 		}
 		d->symbol = sym;
 		scope_bind(*h, d->name, sym);
@@ -198,12 +199,27 @@ void decl_codegen( struct decl *d, FILE *f ) {
 	}
 	// if it is a function declaration
 	else {
-		// function preamble
+		fprintf(f, ".text\n");
+		fprintf(f, ".global %s\n", d->symbol->name);
+		fprintf(f, "%s:\n", d->symbol->name);
+	
+		// determine the number of locals and parameters used in the function
+		int numParams = 0; 
+		struct param_list *p = d->type->params;
+		while (p) {
+			++numParams;
+			p = p->next;
+		}
+		int numLocals = d->symbol->numLocals;	
 		
+		// function preamble
+		preamble_codegen(f, numParams, numLocals);		
+	
 		// generate code for the statement list in the code
 		stmt_codegen(d->code, f);
 	
 		// function postamble	
+		postamble_codegen(f);
 	}
 
 	// generate the code for the next declaration in the list

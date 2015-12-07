@@ -826,6 +826,9 @@ void expr_codegen (struct expr *e, FILE *f) {
 	if (!e) return;
 
 	char *s;
+	int extra_reg;
+	struct expr *arg;
+	int argNum;
 
 	switch (e->kind) {
 		case EXPR_NAME:
@@ -857,15 +860,6 @@ void expr_codegen (struct expr *e, FILE *f) {
 			// then pass it up the tree -- nothing to generate for a grouping
 			e->reg = e->left->reg;
 			break;
-		case EXPR_ARRAY_INIT:
-			// not supported in code generation
-			break;
-		case EXPR_SUBSCRIPT:
-			// not supported in code generation
-			break;
-		case EXPR_FUNCTION_CALL:
-			// TODO
-			break;
 		case EXPR_INCREMENT:	
 		case EXPR_DECREMENT:
 			e->reg = register_alloc();
@@ -882,22 +876,32 @@ void expr_codegen (struct expr *e, FILE *f) {
 			break;
 		case EXPR_NEGATION:
 			expr_codegen(e->left, f);
-			fprintf(f, "SUBQ $0, %s\n", register_name(e->left->reg));
+			extra_reg = register_alloc();	
+			fprintf(f, "MOV $0, %s\n", register_name(extra_reg));
+			fprintf(f, "SUBQ %s, %s\n", register_name(e->left->reg), register_name(extra_reg));
+			register_free(e->left->reg);
+			e->reg = extra_reg;
+			break;
+		case EXPR_ADD:
+		case EXPR_SUB:
+			expr_codegen(e->left, f);
+			expr_codegen(e->right, f);
+			if (e->kind == EXPR_ADD) 
+			{
+				fprintf(f, "ADDQ %s, %s\n", register_name(e->right->reg), register_name(e->left->reg));
+			} else {
+				fprintf(f, "SUBQ %s, %s\n", register_name(e->right->reg), register_name(e->left->reg));
+			}
 			e->reg = e->left->reg;
+			register_free(e->right->reg);
 			break;
-		case EXPR_NOT:
-			break;
-		case EXPR_EXPONENT:
-			break;
+	////////////// TODO below this ///////////////
 		case EXPR_MULT:
 			break;
 		case EXPR_DIV:
-			break;
 		case EXPR_MOD:
 			break;
-		case EXPR_ADD:
-			break;
-		case EXPR_SUB:
+		case EXPR_NOT:
 			break;
 		case EXPR_LT:
 			break;
@@ -916,6 +920,52 @@ void expr_codegen (struct expr *e, FILE *f) {
 		case EXPR_OR:
 			break;
 		case EXPR_ASSIGN:
+			break;
+		case EXPR_FUNCTION_CALL:
+			// first need to codegen any arguments -- args in L subtree
+			// also, put the results of these in the argument registers
+			arg = e->left;
+			argNum = 1;
+			while (arg) {
+				expr_codegen(arg, f);
+				switch (argNum) {
+					case 1: fprintf(f, "MOV %s, %%rdi\n", register_name(arg->reg)); break;
+					case 2: fprintf(f, "MOV %s, %%rsi\n", register_name(arg->reg)); break;
+					case 3: fprintf(f, "MOV %s, %%rdx\n", register_name(arg->reg)); break;
+					case 4: fprintf(f, "MOV %s, %%rcx\n", register_name(arg->reg)); break;
+					case 5: fprintf(f, "MOV %s, %%r8\n", register_name(arg->reg)); break;
+					case 6: fprintf(f, "MOV %s, %%r9\n", register_name(arg->reg)); break;
+					default:
+						// should not get more than 6 args, if so then bug in earlier part of code
+						printf("bug in code: should not have more than 6 args\n"); 
+						break;
+				}
+				register_free(arg->reg);			
+				arg = arg->next;
+				++argNum;
+			}
+
+			// save caller saved regs
+			fprintf(f, "PUSHQ %%r10\n");
+			fprintf(f, "PUSHQ %%r11\n");
+
+			// make the function call
+			fprintf(f, "CALL %s\n", e->name);			
+
+			// restore r10 and r11
+			fprintf(f, "POPQ %%r11\n");
+			fprintf(f, "POPQ %%r10\n");
+			e->reg = register_alloc();
+			fprintf(f, "MOV %%rax, %s\n", register_name(e->reg));
+			break;
+
+		case EXPR_EXPONENT:
+			// should have been converted to a function call 
+			printf("bug in code: should not have an exponent expression in code gen\n");
+			break;
+		case EXPR_ARRAY_INIT:
+		case EXPR_SUBSCRIPT:
+			// not supported in code generation
 			break;
 	}
 
