@@ -1,0 +1,11 @@
+main: function integer() = {
+	x: integer = 13;
+	y: integer = 5;
+
+	for (x = 0; x < 5; x++) {
+		print "hello ", x, "\n";
+	}
+
+	return y;
+	
+}

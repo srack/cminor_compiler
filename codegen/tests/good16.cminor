@@ -1,0 +1,19 @@
+main: function integer() = {
+	x: integer = 13;
+	y: integer = 5;
+
+	for(x = 1; x <=y; x= x+2) {
+		if (x != y) {
+			if (y == 13 || x == y ) {
+				print "hello!\n";
+			} else {
+				print "hi!!\n";
+			}
+		} else {
+			print "hey there!\n";
+		}
+	}
+
+	return y;
+	
+}

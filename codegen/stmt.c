@@ -279,8 +279,12 @@ int stmt_checkForArrays(struct stmt *s) {
 void stmt_codegen( struct stmt *s, FILE *f) {
 	if (!s) return;
 
-	int ifJumpLabel;
-	int elseJumpLabel;
+	int ifLabel;
+	int elseLabel;
+	int forLabel;
+	int endForLabel;
+
+	char *symb_str;
 
 	switch (s->kind) {
 		case STMT_DECL:
@@ -290,27 +294,56 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 			expr_codegen(s->expr, f);
 			register_free(s->expr->reg);
 			break;
-		////// TODO /////
 		case STMT_IF_ELSE:
 			expr_codegen(s->init_expr, f);
 			fprintf(f, "CMP $1, %s\n", register_name(s->init_expr->reg));
 			// if the if condition is true, jump  to the if body
 			fprintf(f, "JE L%d\n", jump_label_count);
-			ifJumpLabel = jump_label_count;
+			ifLabel = jump_label_count;
 			++jump_label_count;
 			// otherwise, fall through to the else body
 			stmt_codegen(s->else_body, f);
 			fprintf(f, "JMP L%d\n", jump_label_count);
-			elseJumpLabel = jump_label_count;
+			elseLabel = jump_label_count;
 			++jump_label_count;
 			// if body now
-			fprintf(f, "L%d:\n", ifJumpLabel);
+			fprintf(f, "L%d:\n", ifLabel);
 			stmt_codegen(s->body, f);
-			fprintf(f, "L%d:\n", elseJumpLabel);
+			fprintf(f, "L%d:\n", elseLabel);
 			register_free(s->init_expr->reg);
 			break;
-		///// TODO //////
 		case STMT_FOR:	
+			// init expression executes once
+			expr_codegen(s->init_expr, f);
+			// free the register
+			register_free(s->init_expr->reg);
+			
+			// add a label for where to start each loop iteration
+			fprintf(f, "L%d:\n", jump_label_count);
+			forLabel = jump_label_count;
+			++jump_label_count;
+
+			// check the loop conditional, if one exists
+			if (s->expr) {
+				expr_codegen(s->expr, f);
+				fprintf(f, "CMP $1, %s\n", register_name(s->expr->reg));
+				// if boolean is false, time to leave the loop
+				fprintf(f, "JNE L%d\n", jump_label_count);
+				endForLabel = jump_label_count;
+				++jump_label_count;
+			}
+		
+			// generate code for the body of the loop
+			stmt_codegen(s->body, f);
+			
+			// do next_expr, if one exists
+			expr_codegen(s->next_expr, f);
+			
+			// jump back to the beginning
+			fprintf(f, "JMP L%d\n", forLabel);
+			// add label for end of loop
+			fprintf(f, "L%d:\n", endForLabel);
+
 			break;
 		case STMT_RETURN:
 			// if there is an expression, generate code for it 
