@@ -115,7 +115,7 @@ while	{ return WHILE; }
 
 \"([^\n\"]|\\\")*\" { 
 	char *tmp = malloc(sizeof(char)*(strlen(yytext)+1));
-	strncpy(tmp, yytext, strlen(yytext));
+	strcpy(tmp, yytext);
 	// i used for iterating through tmp
 	// j for yytext
 	int i, j;

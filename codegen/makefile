@@ -6,7 +6,7 @@ cminor: y.tab.o lex.yy.o shared.o decl.o expr.o param_list.o stmt.o type.o symbo
 	gcc -g -Wall main.o lex.yy.o y.tab.o shared.o decl.o expr.o param_list.o stmt.o type.o symbol.o hash_table.o scope.o library.o register.o -o cminor
 
 # build all object files
-%.o: %c *.h
+%.o: %.c *.h
 	gcc -c -g $< -o $@
 
 # generate scanner files using flex
