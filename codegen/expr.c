@@ -6,6 +6,7 @@
 #include <string.h>
 
 int string_literal_count = 0;
+int jump_label_count = 0;
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr *e = malloc(sizeof(*e));
@@ -830,6 +831,7 @@ void expr_codegen (struct expr *e, FILE *f) {
 	int extra_reg;
 	struct expr *arg;
 	int argNum;
+	char *jumpOpt;
 
 	switch (e->kind) {
 		case EXPR_NAME:
@@ -896,11 +898,32 @@ void expr_codegen (struct expr *e, FILE *f) {
 			e->reg = e->left->reg;
 			register_free(e->right->reg);
 			break;
-	////////////// TODO below this ///////////////
 		case EXPR_MULT:
+			expr_codegen(e->left, f);
+			expr_codegen(e->right, f);
+			fprintf(f, "MOV %s, %%rax\n", register_name(e->left->reg));
+			fprintf(f, "IMULQ %s\n", register_name(e->right->reg));
+			fprintf(f, "MOV %%rax, %s\n", register_name(e->left->reg));
+			e->reg = e->left->reg;
+			register_free(e->right->reg);
 			break;
 		case EXPR_DIV:
 		case EXPR_MOD:
+			expr_codegen(e->left, f);
+			expr_codegen(e->right, f);
+			fprintf(f, "MOV %s, %%rax\n", register_name(e->left->reg));
+			// sign extend rax into rdx, NOTE: don't have to save 
+			//  rdx because it will be on the stack if it is needed
+			fprintf(f, "CQO\n");
+			// result of division goes in rax, result of mod goes inrdx
+			fprintf(f, "IDIVQ %s\n", register_name(e->right->reg));
+			if (e->kind == EXPR_DIV) {
+				fprintf(f, "MOV %%rax, %s\n", register_name(e->left->reg));
+			} else {
+				fprintf(f, "MOV %%rdx, %s\n", register_name(e->left->reg));
+			}
+			e->reg = e->left->reg;
+			register_free(e->right->reg);
 			break;
 		case EXPR_NOT:
 			expr_codegen(e->left, f);
@@ -908,22 +931,53 @@ void expr_codegen (struct expr *e, FILE *f) {
 			e->reg = e->left->reg;
 			break;
 		case EXPR_LT:
-			break;
 		case EXPR_LE:
-			break;
 		case EXPR_GT:
-			break;
 		case EXPR_GE:
-			break;
 		case EXPR_EQ:
-			break;
 		case EXPR_NE:
+			expr_codegen(e->left, f);
+			expr_codegen(e->right, f);
+			fprintf(f, "CMP %s, %s\n", register_name(e->right->reg), register_name(e->left->reg));
+			switch(e->kind) {
+				case EXPR_LT: jumpOpt = "JL"; break;
+				case EXPR_LE: jumpOpt = "JLE"; break;
+				case EXPR_GT: jumpOpt = "JG"; break;
+				case EXPR_GE: jumpOpt = "JGE"; break;
+				case EXPR_EQ: jumpOpt = "JE"; break;
+				case EXPR_NE: jumpOpt = "JNE"; break;
+			}
+			fprintf(f, "%s L%d\n", jumpOpt, jump_label_count);
+			++jump_label_count;	//note need this minus one to print later
+			e->reg = e->left->reg;
+			register_free(e->right->reg);
+			// if don't jump, put false in result
+			fprintf(f, "MOVQ $0, %s\n", register_name(e->reg));
+			fprintf(f, "JMP L%d\n", jump_label_count);
+			// if jumped, put true in result
+			fprintf(f, "L%d:\n", jump_label_count - 1);
+			fprintf(f, "MOVQ $1, %s\n" , register_name(e->reg));
+			fprintf(f, "L%d:\n", jump_label_count);
+			++jump_label_count;
 			break;
 		case EXPR_AND:
-			break;
 		case EXPR_OR:
+			expr_codegen(e->left, f);
+			expr_codegen(e->right, f);
+			if (e->kind == EXPR_AND) {
+				fprintf(f, "ANDQ %s, %s\n", register_name(e->right->reg), register_name(e->left->reg));
+			} else {
+				fprintf(f, "ORQ %s, %s\n", register_name(e->right->reg), register_name(e->left->reg));
+			}
+			e->reg = e->left->reg;
+			register_free(e->right->reg);
 			break;
 		case EXPR_ASSIGN:
+			expr_codegen(e->right, f);
+			s = symbol_code(e->left->symbol);
+			fprintf(f, "MOVQ %s, %s\n", register_name(e->right->reg), s);	
+			free(s);
+			e->reg = e->right->reg;
 			break;
 		case EXPR_FUNCTION_CALL:
 			// first need to codegen any arguments -- args in L subtree

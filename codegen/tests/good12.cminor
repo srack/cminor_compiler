@@ -1,0 +1,10 @@
+main: function integer() = {
+	x: integer = 13;
+	y: integer = 5;
+	
+	z: integer = x / y;
+	a: integer = x % y;
+	print x, " / ", y, " = ", z;
+	print "  ", x, " % ", y, " = ", a;
+	return y;		
+}

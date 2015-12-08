@@ -154,7 +154,6 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 	struct expr *e;
 	// for converting elements in print statement into function calls
 	struct stmt *s_next;
-	struct stmt *s_added;	
 
 	switch (s->kind) {
 		case STMT_DECL:
