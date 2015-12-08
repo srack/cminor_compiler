@@ -107,7 +107,7 @@ while	{ return WHILE; }
 			default: yytext[0] = tmp[2]; break;
 		}
 	}
-	free(tmp);
+//	free(tmp);
 	yytext[1] = '\0';
 
 	return CHARACTER_LITERAL; 
@@ -154,7 +154,7 @@ while	{ return WHILE; }
 			escaped = 0;
 		}
 	}
-	free(tmp);
+//	free(tmp);
 	yytext[j] = '\0';
 	if (j > 256) return TOKEN_ERROR; //string too long
 	return STRING_LITERAL; 

@@ -182,7 +182,7 @@ void decl_codegen( struct decl *d, FILE *f ) {
 				fprintf(f, ".data\n");
 				fprintf(f, "%s: ", d->symbol->name);
 				if (d->symbol->type->kind == TYPE_STRING) {
-					// NOTE: still have to escape \n etc
+					// TODO still have to escape \n etc
 					fprintf(f, ".string \"%s\"\n", d->value ? d->value->string_literal : "");
 				} else {
 					// default init value is 0 if not specified

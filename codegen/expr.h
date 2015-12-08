@@ -53,11 +53,11 @@ struct expr {
 	char *name;
 	struct symbol *symbol;
 	int literal_value;
-	char * string_literal;
+	char *string_literal;
 
 	/* used for expr list */
 	struct expr *next;
-
+	
 	int reg;
 };
 

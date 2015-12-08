@@ -43,8 +43,10 @@ struct expr * expr_create_character_literal( int c ) {
 
 struct expr * expr_create_string_literal( const char *str ) {
 	struct expr *e = expr_create(EXPR_STRING_LITERAL, 0, 0);
-	e->string_literal = malloc(sizeof(strlen(str) + 1));
-	strcpy(e->string_literal, str);
+	// BUT WHY???????
+	//e->string_literal = malloc(sizeof(strlen(str) + 1));
+	//strcpy(e->string_literal, str);
+	e->string_literal = str;
 	return e;
 }
 
@@ -92,6 +94,7 @@ void expr_print( struct expr * e ) {
 			break;
 		case EXPR_STRING_LITERAL:
 			// max length of the "extended" string is double the original (where all characters are escaped
+	
 			strLit = malloc(sizeof(char) * strlen(e->string_literal) * 2 + 1);
 			for (i = 0, j = 0; i < strlen(e->string_literal); ++i, ++j) {
 				c = e->string_literal[i];

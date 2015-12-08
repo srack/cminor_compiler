@@ -96,6 +96,7 @@ int typeCheck(char *filename) {
 	// now, can do type checking on the AST
 	decl_typecheck(program);	
 
+
 	// return the appropriate value
 	return error_count > 0;
 }
