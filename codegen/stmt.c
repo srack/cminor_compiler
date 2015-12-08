@@ -5,7 +5,7 @@
 
 #include "stmt.h"
 
-int label_counter = 0;
+extern int jump_label_count;
 
 /* Function: stmt_create
  */
@@ -279,6 +279,9 @@ int stmt_checkForArrays(struct stmt *s) {
 void stmt_codegen( struct stmt *s, FILE *f) {
 	if (!s) return;
 
+	int ifJumpLabel;
+	int elseJumpLabel;
+
 	switch (s->kind) {
 		case STMT_DECL:
 			decl_codegen(s->decl, f);
@@ -289,7 +292,22 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 			break;
 		////// TODO /////
 		case STMT_IF_ELSE:
-			// label_counter global
+			expr_codegen(s->init_expr, f);
+			fprintf(f, "CMP $1, %s\n", register_name(s->init_expr->reg));
+			// if the if condition is true, jump  to the if body
+			fprintf(f, "JE L%d\n", jump_label_count);
+			ifJumpLabel = jump_label_count;
+			++jump_label_count;
+			// otherwise, fall through to the else body
+			stmt_codegen(s->else_body, f);
+			fprintf(f, "JMP L%d\n", jump_label_count);
+			elseJumpLabel = jump_label_count;
+			++jump_label_count;
+			// if body now
+			fprintf(f, "L%d:\n", ifJumpLabel);
+			stmt_codegen(s->body, f);
+			fprintf(f, "L%d:\n", elseJumpLabel);
+			register_free(s->init_expr->reg);
 			break;
 		///// TODO //////
 		case STMT_FOR:	

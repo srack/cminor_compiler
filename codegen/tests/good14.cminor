@@ -1,0 +1,17 @@
+main: function integer() = {
+	x: integer = 13;
+	y: integer = 5;
+
+	if (x != y) {
+		if (y == 13 || x == y ) {
+			print "hello!\n";
+		} else {
+			print "this is what we want!!\n";
+		}
+	} else {
+		print "hey there!\n";
+	}
+
+	return y;
+	
+}

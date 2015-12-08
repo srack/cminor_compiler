@@ -606,59 +606,8 @@ struct type *expr_typecheck( struct expr * e ) {
 			type_delete(b);
 			return type_create(TYPE_INTEGER, 0, 0, 0);
 		case EXPR_LT:
-			a = expr_typecheck(e->left);
-			b = expr_typecheck(e->right);
-			if (a->kind != TYPE_INTEGER || b->kind != TYPE_INTEGER) {
-				printf("type error: cannot compare ");
-				type_print(a);
-				printf(" (");
-				expr_print(e->left);
-				printf(") with ");
-				type_print(b);
-				printf(" (");
-				expr_print(e->right);
-				printf(")\n");
-				++error_count;
-			}
-			type_delete(a);
-			type_delete(b);
-			return type_create(TYPE_BOOLEAN, 0, 0, 0);
 		case EXPR_LE:
-			a = expr_typecheck(e->left);
-			b = expr_typecheck(e->right);
-			if (a->kind != TYPE_INTEGER || b->kind != TYPE_INTEGER) {
-				printf("type error: cannot compare ");
-				type_print(a);
-				printf(" (");
-				expr_print(e->left);
-				printf(") with ");
-				type_print(b);
-				printf(" (");
-				expr_print(e->right);
-				printf(")\n");
-				++error_count;
-			}
-			type_delete(a);
-			type_delete(b);
-			return type_create(TYPE_BOOLEAN, 0, 0, 0);
 		case EXPR_GT:
-			a = expr_typecheck(e->left);
-			b = expr_typecheck(e->right);
-			if (a->kind != TYPE_INTEGER || b->kind != TYPE_INTEGER) {
-				printf("type error: cannot compare ");
-				type_print(a);
-				printf(" (");
-				expr_print(e->left);
-				printf(") with ");
-				type_print(b);
-				printf(" (");
-				expr_print(e->right);
-				printf(")\n");
-				++error_count;
-			}
-			type_delete(a);
-			type_delete(b);
-			return type_create(TYPE_BOOLEAN, 0, 0, 0);
 		case EXPR_GE:
 			a = expr_typecheck(e->left);
 			b = expr_typecheck(e->right);
@@ -678,36 +627,6 @@ struct type *expr_typecheck( struct expr * e ) {
 			type_delete(b);
 			return type_create(TYPE_BOOLEAN, 0, 0, 0);
 		case EXPR_EQ:
-			// first evaluate subtrees
-			a = expr_typecheck(e->left);
-			b = expr_typecheck(e->right);
-
-			// then check if either of them evaluates to an array or funcion
-			if (a->kind == TYPE_ARRAY || a->kind == TYPE_FUNCTION || a->kind == TYPE_VOID || 
-			  b->kind == TYPE_ARRAY || b->kind == TYPE_FUNCTION || b->kind == TYPE_VOID ||
-			  !type_compare(a, b)) {
-				printf("type error: cannot check for equality of ");
-				type_print(a);
-				printf(" (");
-				expr_print(e->left);
-				printf(") and ");
-				type_print(b);
-				printf(" (");
-				expr_print(e->right);
-				printf(")\n");
-				++error_count;
-			} else if (a->kind == TYPE_STRING) {
-				// convert it into a function call of strcmp, but also have to NOT
-				//  the result of this call since it returns 0 on a match and 1 or -1
-				//  on no match
-				e->kind = EXPR_NOT;
-				struct expr *args = e->left;
-				args->next = e->right;
-				e->left = expr_create_function_call("strcmp", args);
-			}
-			type_delete(a);
-			type_delete(b);	
-			return type_create(TYPE_BOOLEAN, 0, 0, 0);
 		case EXPR_NE:
 			// first evaluate subtrees
 			a = expr_typecheck(e->left);
@@ -735,7 +654,6 @@ struct type *expr_typecheck( struct expr * e ) {
 				args->next = e->right;
 				e->left = args;
 			}
-			type_delete(a);
 			type_delete(a);
 			type_delete(b);	
 			return type_create(TYPE_BOOLEAN, 0, 0, 0);
