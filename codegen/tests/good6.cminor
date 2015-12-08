@@ -4,6 +4,6 @@ blah: function integer (y: integer) = {
 
 main: function integer() = {
 	x: integer = 5;
-	print x, " hello";
+	print x, " hello\n";
 	return blah(x);		
 }

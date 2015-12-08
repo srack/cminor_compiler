@@ -1,5 +1,5 @@
 main: function integer() = {
 	x: string = "hello";
-	print x, 9>=8||9==9; 
+	print x, "\t", 9>=8||9==9, "\n"; 
 	return 5*3;		
 }

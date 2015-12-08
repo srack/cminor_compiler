@@ -5,6 +5,7 @@ main: function integer() = {
 	z: integer = x / y;
 	a: integer = x % y;
 	print x, " / ", y, " = ", z;
-	print "  ", x, " % ", y, " = ", a;
+	print "\t", x, " % ", y, " = ", a;
+	print "\n";
 	return y;		
 }

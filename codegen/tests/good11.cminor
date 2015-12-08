@@ -2,6 +2,6 @@ main: function integer() = {
 	x: string = "hello";
 	y: integer = 5;
 	y = y * 10; 
-	print x, ": ", y;
+	print x, ": ", y, "\n";
 	return y;		
 }

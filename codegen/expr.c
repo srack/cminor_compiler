@@ -832,6 +832,8 @@ void expr_codegen (struct expr *e, FILE *f) {
 	struct expr *arg;
 	int argNum;
 	char *jumpOpt;
+	int i, j;
+	char c;
 
 	switch (e->kind) {
 		case EXPR_NAME:
@@ -851,7 +853,62 @@ void expr_codegen (struct expr *e, FILE *f) {
 			// switch to data section to add the string literal as a global
 			fprintf(f, ".data\n");
 			fprintf(f, "STR%d:\n", string_literal_count);
-			fprintf(f, ".string \"%s\"\n", e->string_literal);
+
+			s = malloc(sizeof(char) * strlen(e->string_literal) * 2 + 1);
+			for (i = 0, j = 0; i < strlen(e->string_literal); ++i, ++j) {
+				c = e->string_literal[i];
+				if (c == '\a') {
+					s[j] = '\\';
+					++j;
+					s[j] = 'a';
+				} else if (c == '\b') { 
+					s[j] = '\\';
+					++j;
+					s[j] = 'b';
+				} else if (c == '\f') {
+					s[j] = '\\';
+					++j;
+					s[j] = 'f';
+				} else if (c == '\n') {
+					s[j] = '\\';
+					++j;	
+					s[j] = 'n';
+				} else if (c == '\r') {
+					s[j] = '\\';
+					++j;
+					s[j] = 'r';
+				} else if (c == '\t') {
+					s[j] = '\\';
+					++j;
+					s[j] = 't';
+				} else if (c == '\v') {
+					s[j] = '\\';
+					++j;
+					s[j] = 'v';
+				} else if (c == '\"') {
+					s[j] = '\\';
+					++j;
+					s[j] = '\"';
+				} else if (c == '\\') {
+					s[j] = '\\';
+					++j;
+					s[j] = '\\';
+				} else if (c == '\'') {
+					s[j] = '\\';
+					++j;
+					s[j] = '\'';
+				} else if (c == '\?') {
+					s[j] = '\\';
+					++j;
+					s[j] = '\?'; 
+				} else {
+					s[j] =  e->string_literal[i];
+				}
+			}
+			s[j] = '\0';
+			fprintf(f, ".string \"%s\"\n", s);
+			free(s);
+
 			// switch back to code section
 			fprintf(f, ".text\n");
 			fprintf(f, "LEA STR%d, %s\n", string_literal_count, register_name(e->reg));
