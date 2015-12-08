@@ -172,28 +172,33 @@ void decl_codegen( struct decl *d, FILE *f ) {
 
 	// if a declaration of a variable (ie. not a function
 	if (!d->code) {
-		// check if it is global
-		if(d->symbol->kind == SYMBOL_GLOBAL) {
-			// any value it has (if it has one) will be a literal
-			fprintf(f, ".data\n");
-			fprintf(f, "%s: ", d->symbol->name);
-			if (d->symbol->type->kind == TYPE_STRING) {
-				// NOTE: still have to escape \n etc
-				fprintf(f, ".string \"%s\"\n", d->value ? d->value->string_literal : "");
-			} else {
-				// default init value is 0 if not specified
-				fprintf(f, ".quad %d\n", d->value ? d->value->literal_value: 0);
+		if(d->symbol->type->kind == TYPE_FUNCTION) {
+			// do nothing
+		} else {
+
+			// check if it is global
+			if(d->symbol->kind == SYMBOL_GLOBAL) {
+				// any value it has (if it has one) will be a literal
+				fprintf(f, ".data\n");
+				fprintf(f, "%s: ", d->symbol->name);
+				if (d->symbol->type->kind == TYPE_STRING) {
+					// NOTE: still have to escape \n etc
+					fprintf(f, ".string \"%s\"\n", d->value ? d->value->string_literal : "");
+				} else {
+					// default init value is 0 if not specified
+					fprintf(f, ".quad %d\n", d->value ? d->value->literal_value: 0);
+				}
 			}
-		}
-		// otherwise it is local
-		else {
-			// space is already allocated on the stack for these in preamble of function
-			if (d->value) {
-				expr_codegen(d->value, f);
-				char *s = symbol_code(d->symbol);
-				fprintf(f, "MOV %s, %s\n", register_name(d->value->reg), s);
-				free(s);
-				register_free(d->value->reg);
+			// otherwise it is local
+			else {
+				// space is already allocated on the stack for these in preamble of function
+				if (d->value) {
+					expr_codegen(d->value, f);
+					char *s = symbol_code(d->symbol);
+					fprintf(f, "MOV %s, %s\n", register_name(d->value->reg), s);
+					free(s);
+					register_free(d->value->reg);
+				}
 			}
 		}
 	}

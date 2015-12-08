@@ -6,7 +6,7 @@
 #include <string.h>
 
 int string_literal_count = 0;
-int jump_label_count = 0;
+extern int jump_label_count;
 
 struct expr * expr_create( expr_t kind, struct expr *left, struct expr *right ) {
 	struct expr *e = malloc(sizeof(*e));
@@ -970,7 +970,7 @@ void expr_codegen (struct expr *e, FILE *f) {
 					case 6: fprintf(f, "MOV %s, %%r9\n", register_name(arg->reg)); break;
 					default:
 						// should not get more than 6 args, if so then bug in earlier part of code
-						printf("bug in code: should not have more than 6 args\n"); 
+						printf("bug in code: should not have more than 6 args (%s)\n", e->name); 
 						break;
 				}
 				register_free(arg->reg);			

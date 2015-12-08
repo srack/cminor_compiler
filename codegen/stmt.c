@@ -5,7 +5,7 @@
 
 #include "stmt.h"
 
-extern int jump_label_count;
+int jump_label_count = 0;
 
 /* Function: stmt_create
  */
@@ -234,6 +234,7 @@ void stmt_typecheck( struct stmt * s, struct decl * d ) {
 				}
 
 				e = e->next;
+				s->expr->left->next = 0;
 				if (e) {
 					s->next = stmt_create(STMT_EXPR, 0, 0, 0, 0, 0, 0, 0);
 					s = s->next;
@@ -314,10 +315,12 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 			break;
 		case STMT_FOR:	
 			// init expression executes once
-			expr_codegen(s->init_expr, f);
-			// free the register
-			register_free(s->init_expr->reg);
-			
+			if (s->init_expr) {
+				expr_codegen(s->init_expr, f);
+				// free the register
+				register_free(s->init_expr->reg);
+			}
+
 			// add a label for where to start each loop iteration
 			fprintf(f, "L%d:\n", jump_label_count);
 			forLabel = jump_label_count;
@@ -329,16 +332,18 @@ void stmt_codegen( struct stmt *s, FILE *f) {
 				fprintf(f, "CMP $1, %s\n", register_name(s->expr->reg));
 				// if boolean is false, time to leave the loop
 				fprintf(f, "JNE L%d\n", jump_label_count);
-				endForLabel = jump_label_count;
-				++jump_label_count;
 			}
+			endForLabel = jump_label_count;
+			++jump_label_count;
 		
 			// generate code for the body of the loop
 			stmt_codegen(s->body, f);
 			
 			// do next_expr, if one exists
-			expr_codegen(s->next_expr, f);
-			
+			if (s->next_expr) {
+				expr_codegen(s->next_expr, f);
+				register_free(s->next_expr->reg);
+			}
 			// jump back to the beginning
 			fprintf(f, "JMP L%d\n", forLabel);
 			// add label for end of loop
